@@ -691,49 +691,97 @@ details[open] .faq-chev { transform: rotate(180deg); }
 /* ── Burger button ── */
 .nav-burger {
   display: none;
-  width: 38px; height: 38px;
+  width: 44px; height: 44px;
   align-items: center; justify-content: center;
-  background: rgba(243,238,231,0.04);
+  background: rgba(243,238,231,0.06);
   border: 1px solid var(--b-dark);
   border-radius: 9999px;
   color: var(--cream);
+  flex-shrink: 0;
+  position: relative; z-index: 201; /* above drawer for close access */
   transition: background 200ms, border-color 200ms;
 }
-.nav-burger:hover { background: rgba(243,238,231,0.08); border-color: var(--b-dark-md); }
+.nav-burger:hover, .nav-burger:focus-visible {
+  background: rgba(243,238,231,0.10); border-color: var(--b-dark-md); outline: none;
+}
 .nav-burger svg { width: 18px; height: 18px; }
 .nav-burger .icon-close { display: none; }
 .nav-burger[aria-expanded="true"] .icon-open { display: none; }
 .nav-burger[aria-expanded="true"] .icon-close { display: block; }
 
-/* ── Mobile overlay ── */
+/* ── Mobile drawer (side-slide, scrollable, scroll-lock proof) ── */
+.nav-backdrop {
+  position: fixed; inset: 0; z-index: 180;
+  background: rgba(14,12,10,0.55);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 320ms var(--ease);
+}
+.nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
 .nav-mobile {
-  position: fixed; inset: 0; z-index: 150;
-  background: rgba(14,12,10,0.96);
-  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-  display: flex; flex-direction: column; padding: 80px 32px 40px;
-  gap: 8px; opacity: 0; pointer-events: none;
-  transition: opacity 400ms var(--ease);
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 200;
+  width: min(86vw, 360px);
+  background: var(--canvas);
+  border-left: 1px solid var(--b-dark);
+  box-shadow: -32px 0 80px -20px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 420ms var(--ease);
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
-.nav-mobile.is-open { opacity: 1; pointer-events: auto; }
-.nav-mobile a {
-  font-family: var(--f-disp); font-style: italic; font-weight: 700;
-  font-size: 44px; color: var(--cream);
-  padding: 10px 0; letter-spacing: -0.03em;
+.nav-mobile.is-open { transform: translateX(0); }
+.nav-mobile-head {
+  position: sticky; top: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px;
+  background: var(--canvas);
   border-bottom: 1px solid var(--b-dark);
-  transition: color 200ms, padding-left 400ms var(--ease);
 }
-.nav-mobile a:hover { color: var(--rouge); padding-left: 12px; }
+.nav-mobile-head .nav-logo { font-size: 20px; }
+.nav-mobile-close {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(243,238,231,0.06);
+  border: 1px solid var(--b-dark); border-radius: 9999px;
+  color: var(--cream); cursor: pointer;
+}
+.nav-mobile-close:hover, .nav-mobile-close:focus-visible {
+  background: rgba(243,238,231,0.10); outline: none;
+}
+.nav-mobile-close svg { width: 18px; height: 18px; }
+.nav-mobile-body { padding: 24px 24px 32px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav-mobile a:not(.nav-mobile-cta) {
+  font-family: var(--f-disp); font-style: italic; font-weight: 700;
+  font-size: 32px; color: var(--cream);
+  padding: 12px 0; letter-spacing: -0.03em;
+  border-bottom: 1px solid var(--b-dark);
+  transition: color 220ms, padding-left 320ms var(--ease);
+}
+.nav-mobile a:not(.nav-mobile-cta):hover,
+.nav-mobile a:not(.nav-mobile-cta):focus-visible {
+  color: var(--rouge); padding-left: 8px; outline: none;
+}
 .nav-mobile .nav-mobile-cta {
-  margin-top: 28px;
+  margin-top: 24px;
   display: inline-flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 18px 24px; background: var(--rouge); color: var(--cream);
+  padding: 16px 22px; background: var(--rouge); color: var(--cream);
   border-radius: 9999px; font-family: var(--f-body); font-style: normal;
-  font-weight: 600; font-size: 16px; border: none;
+  font-weight: 600; font-size: 15px; border: none;
+  box-shadow: 0 8px 24px -8px rgba(200,50,26,0.5);
 }
+.nav-mobile .nav-mobile-cta:hover { background: var(--rouge-h); }
 .nav-mobile .nav-mobile-meta {
-  margin-top: auto; font-family: var(--f-mono); font-size: 11px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--b-dark);
+  font-family: var(--f-mono); font-size: 11px;
   color: var(--muted-d); letter-spacing: 0.06em; line-height: 1.7;
 }
+
+/* Body scroll-lock (iOS-safe). Applied via JS class. */
+body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; }
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
@@ -751,7 +799,17 @@ details[open] .faq-chev { transform: rotate(180deg); }
   .tarifs-grid, .temo-grid, .equipe-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .floating-nav .nav-links { display: none; }
-  .floating-nav { gap: 12px; padding: 8px 8px 8px 16px; }
+  .floating-nav .nav-cta-pill { display: none; } /* CTA moved into drawer to free up space */
+  .floating-nav .nav-mono { display: none; } /* "Rambouillet" hidden on mobile */
+  .floating-nav {
+    gap: 12px;
+    padding: 6px 6px 6px 18px;
+    left: 16px; right: 16px;
+    transform: none;
+    width: auto;
+    max-width: none;
+    justify-content: space-between;
+  }
   .nav-burger { display: inline-flex; }
   .stats-bento { grid-template-columns: 1fr; }
   .closing-form { flex-direction: column; align-items: stretch; }
@@ -857,8 +915,18 @@ details[open] .faq-chev { transform: rotate(180deg); }
   </button>
 </nav>
 
-<!-- ── Mobile nav overlay ── -->
-<div class="nav-mobile" id="nav-mobile" role="dialog" aria-label="Menu mobile" aria-hidden="true">
+<!-- ── Mobile nav backdrop ── -->
+<div class="nav-backdrop" id="nav-backdrop" aria-hidden="true"></div>
+
+<!-- ── Mobile nav drawer (slide-from-right) ── -->
+<aside class="nav-mobile" id="nav-mobile" role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden="true" tabindex="-1">
+  <header class="nav-mobile-head">
+    <span class="nav-logo">D&amp;F</span>
+    <button class="nav-mobile-close" type="button" id="nav-mobile-close" aria-label="Fermer le menu">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+    </button>
+  </header>
+  <nav class="nav-mobile-body" aria-label="Menu principal mobile">
   <a href="#espaces" data-nav-link>Espaces</a>
   <a href="#cours" data-nav-link>Cours</a>
   <a href="#planning" data-nav-link>Planning</a>
@@ -873,7 +941,8 @@ details[open] .faq-chev { transform: rotate(180deg); }
     Lun–Sam · 07h00–22h00 · Dim · 09h00–18h00<br>
     ★ 4.8/5 · 194 avis Google
   </div>
-</div>
+  </nav>
+</aside>
 
 <!-- ── Hero ── -->
 <section class="hero" aria-labelledby="hero-h1">
@@ -1748,32 +1817,62 @@ details[open] .faq-chev { transform: rotate(180deg); }
       });
     });
 
-    // ── Burger nav ──
+    // ── Mobile drawer nav (side-slide, iOS-safe scroll-lock) ──
     const burger = document.getElementById('nav-burger');
     const navMobile = document.getElementById('nav-mobile');
-    if (burger && navMobile) {
-      const closeMenu = () => {
-        burger.setAttribute('aria-expanded', 'false');
-        navMobile.classList.remove('is-open');
-        navMobile.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        if (lenis) lenis.start();
+    const navBackdrop = document.getElementById('nav-backdrop');
+    const navClose = document.getElementById('nav-mobile-close');
+    if (burger && navMobile && navBackdrop) {
+      let savedScrollY = 0;
+
+      const lockBody = () => {
+        savedScrollY = window.scrollY || window.pageYOffset || 0;
+        document.body.style.top = `-${savedScrollY}px`;
+        document.body.classList.add('nav-locked');
       };
+      const unlockBody = () => {
+        document.body.classList.remove('nav-locked');
+        document.body.style.top = '';
+        window.scrollTo(0, savedScrollY);
+      };
+
       const openMenu = () => {
         burger.setAttribute('aria-expanded', 'true');
         navMobile.classList.add('is-open');
         navMobile.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        navBackdrop.classList.add('is-open');
+        lockBody();
         if (lenis) lenis.stop();
+        // focus the close button for accessibility
+        setTimeout(() => navClose && navClose.focus(), 50);
       };
-      burger.addEventListener('click', () => {
+      const closeMenu = () => {
+        burger.setAttribute('aria-expanded', 'false');
+        navMobile.classList.remove('is-open');
+        navMobile.setAttribute('aria-hidden', 'true');
+        navBackdrop.classList.remove('is-open');
+        unlockBody();
+        if (lenis) lenis.start();
+        // return focus to the burger so keyboard users don't get lost
+        burger.focus();
+      };
+      const toggle = () => {
         burger.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
-      });
+      };
+
+      burger.addEventListener('click', toggle);
+      if (navClose) navClose.addEventListener('click', closeMenu);
+      navBackdrop.addEventListener('click', closeMenu);
       navMobile.querySelectorAll('[data-nav-link]').forEach(a => {
         a.addEventListener('click', closeMenu);
       });
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') closeMenu();
+      });
+      // Auto-close if viewport widens past mobile breakpoint
+      const mq = window.matchMedia('(min-width: 901px)');
+      mq.addEventListener('change', (e) => {
+        if (e.matches && burger.getAttribute('aria-expanded') === 'true') closeMenu();
       });
     }
 
