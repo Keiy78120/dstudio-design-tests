@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-Studio — Tarifs 2026</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&display=swap");
+  </style>
+
+  <!-- Vanta deps -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.halo.min.js"></script>
+  <!-- Tilt -->
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Tokens ── */
+    :root {
+      --canvas:        #0a0a0c;
+      --s1:            rgba(255,255,255,0.025);
+      --s2:            rgba(255,255,255,0.045);
+      --s3:            rgba(255,255,255,0.08);
+      --border:        rgba(255,255,255,0.08);
+      --border-md:     rgba(255,255,255,0.14);
+      --text:          #fafaf9;
+      --muted70:       rgba(250,250,249,0.7);
+      --muted50:       rgba(250,250,249,0.5);
+      --muted30:       rgba(250,250,249,0.3);
+      --accent:        #ff5701;
+      --accent-amber:  #ffb547;
+      --accent-ring:   rgba(255,87,1,0.35);
+      --espresso:      #1c1209;
+      --f-display:     "Cabinet Grotesk", "Plus Jakarta Sans", sans-serif;
+      --f-body:        "Plus Jakarta Sans", sans-serif;
+      --f-mono:        "Geist Mono", monospace;
+      --ease-premium:  cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    body {
+      background: var(--canvas);
+      color: var(--text);
+      font-family: var(--f-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated gradient border — @property ── */
+    @property --grad-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes spin-grad {
+      to { --grad-angle: 360deg; }
+    }
+    .card-pro-shell {
+      position: relative;
+    }
+    .card-pro-shell::before {
+      content: "";
+      position: absolute; inset: -2px;
+      border-radius: 34px;
+      background: conic-gradient(from var(--grad-angle), transparent 60%, var(--accent) 78%, var(--accent-amber) 90%, transparent 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 2px;
+      animation: spin-grad 8s linear infinite;
+      z-index: 0;
+    }
+
+    /* ── Vanta fallback ── */
+    @keyframes fallback-halo {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    #vanta-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background: conic-gradient(from 180deg at 50% 60%, #0a0a0c 0deg, #200a00 90deg, #0a0a0c 180deg, #200a00 270deg, #0a0a0c 360deg);
+    }
+
+    /* ── Content layer ── */
+    .content-layer { position: relative; z-index: 1; }
+
+    /* ── Nav ── */
+    .floating-nav {
+      position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: 28px;
+      padding: 10px 24px;
+      background: rgba(10,10,12,0.72);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.05);
+      z-index: 50;
+      font-family: var(--f-body); font-size: 14px;
+      white-space: nowrap;
+    }
+    .floating-nav .logo { color: var(--accent); font-weight: 700; font-family: var(--f-display); letter-spacing: -0.02em; }
+    .floating-nav a { color: var(--muted70); text-decoration: none; transition: color 200ms; }
+    .floating-nav a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--s3); color: var(--text);
+      border: 1px solid var(--border-md); border-radius: 9999px;
+      padding: 6px 16px; font-size: 13px; font-weight: 600;
+      font-family: var(--f-body); cursor: pointer;
+      transition: background 200ms;
+    }
+    .nav-cta:hover { background: var(--s2); }
+
+    /* ── Container ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Eyebrow ── */
+    .eyebrow {
+      display: inline-flex; align-items: center;
+      font-family: var(--f-mono); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,87,1,0.9);
+      padding: 6px 14px;
+      border: 1px solid rgba(255,87,1,0.25);
+      border-radius: 9999px;
+      background: rgba(255,87,1,0.06);
+    }
+
+    /* ── Hero ── */
+    .hero { padding: min(140px, 16svh) 0 80px; text-align: center; }
+    .hero-h1 {
+      font-family: var(--f-display);
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 0.96;
+      color: var(--text);
+      margin: 20px 0 24px;
+    }
+    .hero-h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-lede {
+      font-size: 18px; color: var(--muted70); max-width: 52ch;
+      margin: 0 auto 40px; font-weight: 400; line-height: 1.65;
+    }
+    .hero-ctas { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+    /* ── CTA button-in-button ── */
+    .cta-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #0a0a0c;
+      padding: 4px 4px 4px 24px; border-radius: 9999px;
+      font-family: var(--f-body); font-weight: 600; font-size: 15px;
+      border: none; cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.25), 0 12px 30px -8px rgba(255,87,1,0.45);
+      transition: transform 700ms var(--ease-premium), box-shadow 200ms;
+      text-decoration: none;
+    }
+    .cta-primary:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.25), 0 16px 40px -8px rgba(255,87,1,0.55); }
+    .cta-primary:active { transform: scale(0.98); }
+    .cta-primary:hover .cta-arrow-wrap { transform: translate(2px, -1px) scale(1.08); }
+    .cta-arrow-wrap {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      background: #0a0a0c; color: var(--accent);
+      border-radius: 9999px;
+      transition: transform 400ms var(--ease-premium);
+      flex-shrink: 0;
+    }
+    .cta-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted70); font-size: 15px; font-weight: 500;
+      text-decoration: none; border: none; background: none;
+      cursor: pointer; font-family: var(--f-body);
+      padding: 8px 4px;
+      transition: color 200ms;
+    }
+    .cta-ghost:hover { color: var(--text); }
+
+    /* ── Section headings ── */
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-h2 {
+      font-family: var(--f-display);
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
+      color: var(--text); margin-top: 16px;
+    }
+    .section-lede { color: var(--muted70); margin-top: 12px; font-size: 16px; max-width: 48ch; margin-left: auto; margin-right: auto; }
+
+    /* ── Pricing grid ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      gap: 20px; align-items: stretch;
+    }
+
+    /* ── Double-bezel card ── */
+    .tilt-card { height: 100%; }
+    .card-outer {
+      height: 100%;
+      padding: 6px; border-radius: 32px;
+      background: var(--s2);
+      border: 1px solid var(--border-md);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 8px 24px -12px rgba(255,87,1,0.12), inset 0 1px 0 rgba(255,255,255,0.10);
+      position: relative; z-index: 1;
+    }
+    .card-inner {
+      height: 100%; padding: 32px 28px; border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.02) 100%);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      display: flex; flex-direction: column; gap: 24px;
+    }
+    .card-pro .card-outer {
+      border-color: transparent;
+      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.65), 0 12px 40px -12px rgba(255,87,1,0.25), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .card-pro .card-inner {
+      background: linear-gradient(160deg, rgba(255,87,1,0.06) 0%, rgba(255,255,255,0.025) 100%);
+    }
+
+    /* Most popular badge */
+    .card-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      white-space: nowrap; font-family: var(--f-mono); font-size: 9px;
+      font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #0a0a0c; background: var(--accent);
+      padding: 5px 14px; border-radius: 9999px;
+      box-shadow: 0 4px 20px -4px rgba(255,87,1,0.5);
+    }
+
+    /* Card content */
+    .card-tier-name {
+      font-family: var(--f-display); font-size: 20px; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    .card-desc { font-size: 13px; color: var(--muted50); margin-top: 4px; }
+    .price-display {
+      font-family: var(--f-display); font-weight: 800;
+      font-size: clamp(52px, 6vw, 80px);
+      color: var(--text); letter-spacing: -0.04em; line-height: 1;
+      text-shadow: 0 0 30px rgba(255,87,1,0.22), 0 4px 12px rgba(0,0,0,0.6);
+      filter: drop-shadow(0 1px 0 rgba(255,181,71,0.35));
+    }
+    .price-period { font-size: 15px; color: var(--muted50); font-weight: 400; margin-top: 4px; }
+    .card-divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,87,1,0.3) 0%, transparent 100%);
+    }
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: rgba(250,250,249,0.78); }
+    .feat-check {
+      width: 18px; height: 18px; border-radius: 9999px; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,87,1,0.12); border: 1px solid rgba(255,87,1,0.3);
+    }
+    .feat-check svg { width: 9px; height: 9px; }
+    .card-cta { margin-top: auto; }
+
+    /* ── Comparison table ── */
+    .comparison-wrap { overflow-x: auto; border-radius: 20px; border: 1px solid var(--border); }
+    .comparison-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .comparison-table thead th {
+      padding: 16px 20px; font-weight: 600; font-family: var(--f-body);
+      background: var(--s2); border-bottom: 1px solid var(--border);
+    }
+    .comparison-table thead th:first-child { text-align: left; color: var(--muted50); }
+    .comparison-table thead th:not(:first-child) { text-align: center; color: var(--muted70); }
+    .comparison-table thead th.col-pro { color: var(--accent) !important; }
+    .comparison-table .section-row td {
+      padding: 10px 20px; font-family: var(--f-mono); font-size: 10px;
+      font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted30); background: var(--s1); border-top: 1px solid var(--border);
+    }
+    .comparison-table .data-row td {
+      padding: 13px 20px; border-top: 1px solid var(--border);
+    }
+    .comparison-table .data-row td:first-child { color: rgba(250,250,249,0.75); text-align: left; }
+    .comparison-table .data-row td:not(:first-child) { text-align: center; }
+    .comparison-table .data-row td.col-pro { background: rgba(255,87,1,0.04); }
+    .cell-check { color: var(--accent); display: flex; justify-content: center; }
+    .cell-dash { color: var(--muted30); display: flex; justify-content: center; font-size: 18px; line-height: 1; }
+    .cell-val { color: var(--muted70); font-weight: 500; }
+
+    /* ── Marquee ── */
+    .marquee-outer { overflow: hidden; padding: 24px 0; position: relative; }
+    .marquee-outer::before, .marquee-outer::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2;
+      pointer-events: none;
+    }
+    .marquee-outer::before { left: 0; background: linear-gradient(90deg, var(--canvas) 0%, transparent 100%); }
+    .marquee-outer::after  { right: 0; background: linear-gradient(-90deg, var(--canvas) 0%, transparent 100%); }
+    .marquee-track {
+      display: flex; gap: 48px; width: max-content;
+      animation: marquee-scroll 30s linear infinite;
+    }
+    @keyframes marquee-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted30); white-space: nowrap;
+    }
+    .marquee-sep { color: var(--accent); opacity: 0.4; }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+    details.faq-item {
+      border-radius: 16px; border: 1px solid var(--border);
+      background: var(--s1); overflow: hidden;
+    }
+    details.faq-item summary {
+      list-style: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 20px 24px; font-size: 15px; font-weight: 500; color: var(--text);
+      transition: background 200ms;
+    }
+    details.faq-item summary:hover { background: var(--s2); }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    .faq-chevron { color: var(--muted30); font-size: 20px; line-height: 1; flex-shrink: 0; transition: transform 250ms var(--ease-premium); }
+    details[open] .faq-chevron { transform: rotate(180deg); }
+    details.faq-item .faq-body { padding: 0 24px 20px; font-size: 14px; color: var(--muted70); line-height: 1.7; }
+
+    /* ── Closing band ── */
+    .closing-band {
+      background: var(--espresso);
+      border-top: 1px solid rgba(255,87,1,0.15);
+      border-radius: 32px;
+      text-align: center; padding: 80px 40px;
+      position: relative; overflow: hidden;
+    }
+    .closing-band::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,87,1,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .closing-h2 {
+      font-family: var(--f-display); font-size: clamp(28px, 4vw, 48px);
+      font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin-bottom: 12px;
+    }
+    .closing-lede { color: var(--muted70); font-size: 15px; margin-bottom: 32px; max-width: 44ch; margin-left: auto; margin-right: auto; }
+
+    /* ── Footer ── */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-family: var(--f-mono); font-size: 11px; color: var(--muted30); letter-spacing: 0.05em; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--f-mono); font-size: 11px; color: var(--muted30); text-decoration: none; letter-spacing: 0.05em; }
+    .footer-links a:hover { color: var(--muted70); }
+
+    /* ── Sections spacing ── */
+    .section { padding: 80px 0; }
+    .section-sm { padding: 48px 0; }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .floating-nav .nav-links { display: none; }
+      .floating-nav { gap: 16px; padding: 10px 18px; }
+      .hero { padding: min(120px, 14svh) 0 60px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .tilt-card { touch-action: pan-y; }
+      .comparison-table { font-size: 12px; }
+      .comparison-table thead th, .comparison-table td { padding: 12px 12px; }
+      .closing-band { border-radius: 20px; padding: 60px 24px; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Vanta bg -->
+<div id="vanta-bg"></div>
+
+<div class="content-layer">
+
+  <!-- ── Floating Navbar ── -->
+  <nav class="floating-nav" aria-label="Navigation principale">
+    <span class="logo">D-Studio</span>
+    <div class="nav-links" style="display:contents">
+      <a href="#plans">Tarifs</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="nav-cta" aria-label="S'inscrire à D-Studio">S'inscrire</button>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="container">
+      <div data-reveal>
+        <span class="eyebrow">↦ Tarification 2026</span>
+      </div>
+      <h1 class="hero-h1" id="hero-heading" data-reveal>
+        Une tarification<br>
+        à la <em>hauteur</em> de vos ambitions
+      </h1>
+      <p class="hero-lede" data-reveal>
+        Des plans conçus pour les équipes qui construisent des produits sérieux — design system complet, support réactif, SLA garanti.
+      </p>
+      <div class="hero-ctas" data-reveal>
+        <a href="#plans" class="cta-primary" aria-label="Voir nos plans tarifaires">
+          <span class="cta-label">Voir nos plans</span>
+          <span class="cta-arrow-wrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+        <a href="#contact" class="cta-ghost" aria-label="Parler à un humain de l'équipe D-Studio">
+          Parler à un humain
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Plan Cards ── -->
+  <section id="plans" class="section" aria-labelledby="plans-heading">
+    <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="eyebrow">↦ Plans</span>
+        <h2 class="section-h2" id="plans-heading">Choisissez votre plan</h2>
+        <p class="section-lede">Sans engagement, résiliation à tout moment. Prix HT, facture disponible.</p>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- Starter -->
+        <article class="tilt-card"
+          data-tilt data-tilt-max="6" data-tilt-perspective="1400"
+          data-tilt-speed="800" data-tilt-glare="true" data-tilt-max-glare="0.14"
+          data-tilt-easing="cubic-bezier(.03,.98,.52,.99)"
+          data-reveal
+          aria-label="Plan Starter — 49 euros par mois">
+          <div class="card-outer">
+            <div class="card-inner">
+              <header>
+                <div class="card-tier-name">Starter</div>
+                <div class="card-desc">Pour démarrer votre présence digitale</div>
+              </header>
+              <div>
+                <div class="price-display" aria-label="49 euros par mois">49€</div>
+                <div class="price-period">/mois · HT</div>
+              </div>
+              <div class="card-divider" aria-hidden="true"></div>
+              <ul class="feature-list" aria-label="Fonctionnalités Starter">
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  1 projet actif simultané
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Design system D-Studio de base
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Export Figma + handoff dev
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Support email (réponse 48h)
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Mises à jour composants mensuelles
+                </li>
+              </ul>
+              <div class="card-cta">
+                <button type="button" class="cta-ghost" style="font-size:14px; border:1px solid var(--border-md); border-radius:9999px; padding:10px 20px; width:100%; justify-content:center;" aria-label="Commencer avec le plan Starter à 49 euros par mois">
+                  Commencer avec Starter
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Pro (highlighted) -->
+        <article class="tilt-card card-pro card-pro-shell"
+          data-tilt data-tilt-max="5" data-tilt-perspective="1400"
+          data-tilt-speed="800" data-tilt-glare="true" data-tilt-max-glare="0.20"
+          data-tilt-easing="cubic-bezier(.03,.98,.52,.99)"
+          data-reveal
+          style="position:relative;"
+          aria-label="Plan Pro — 149 euros par mois, plan recommandé">
+          <div class="card-outer" style="position:relative; z-index:1;">
+            <div class="card-badge" aria-label="Plan recommandé">Most Popular</div>
+            <div class="card-inner">
+              <header>
+                <div class="card-tier-name">Pro</div>
+                <div class="card-desc">Pour les équipes qui veulent aller plus loin</div>
+              </header>
+              <div>
+                <div class="price-display" aria-label="149 euros par mois" style="color:#ff5701; text-shadow:0 0 40px rgba(255,87,1,0.4), 0 4px 12px rgba(0,0,0,0.6);">149€</div>
+                <div class="price-period">/mois · HT</div>
+              </div>
+              <div class="card-divider" aria-hidden="true" style="background:linear-gradient(90deg,rgba(255,87,1,0.6) 0%,rgba(255,181,71,0.3) 60%,transparent 100%);"></div>
+              <ul class="feature-list" aria-label="Fonctionnalités Pro">
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true" style="background:rgba(255,87,1,0.18);border-color:rgba(255,87,1,0.5);"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  5 projets actifs simultanés
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true" style="background:rgba(255,87,1,0.18);border-color:rgba(255,87,1,0.5);"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Design system D-Studio complet
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true" style="background:rgba(255,87,1,0.18);border-color:rgba(255,87,1,0.5);"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Composants premium + variants illimités
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true" style="background:rgba(255,87,1,0.18);border-color:rgba(255,87,1,0.5);"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Support prioritaire (réponse 4h)
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true" style="background:rgba(255,87,1,0.18);border-color:rgba(255,87,1,0.5);"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Accès anticipé nouvelles features
+                </li>
+              </ul>
+              <div class="card-cta">
+                <button type="button" class="cta-primary" style="width:100%; justify-content:space-between;" aria-label="Commencer avec le plan Pro à 149 euros par mois">
+                  <span class="cta-label">Commencer avec Pro</span>
+                  <span class="cta-arrow-wrap" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Studio -->
+        <article class="tilt-card"
+          data-tilt data-tilt-max="6" data-tilt-perspective="1400"
+          data-tilt-speed="800" data-tilt-glare="true" data-tilt-max-glare="0.14"
+          data-tilt-easing="cubic-bezier(.03,.98,.52,.99)"
+          data-reveal
+          aria-label="Plan Studio — 399 euros par mois">
+          <div class="card-outer">
+            <div class="card-inner">
+              <header>
+                <div class="card-tier-name">Studio</div>
+                <div class="card-desc">Pour les agences et grandes équipes</div>
+              </header>
+              <div>
+                <div class="price-display" aria-label="399 euros par mois">399€</div>
+                <div class="price-period">/mois · HT</div>
+              </div>
+              <div class="card-divider" aria-hidden="true"></div>
+              <ul class="feature-list" aria-label="Fonctionnalités Studio">
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Projets illimités
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  White-label + branding custom
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Figma MCP intégration sur mesure
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  Account manager dédié
+                </li>
+                <li class="feature-item">
+                  <span class="feat-check" aria-hidden="true"><svg fill="none" stroke="#ff5701" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+                  SLA 99.9% + support 24/7
+                </li>
+              </ul>
+              <div class="card-cta">
+                <button type="button" class="cta-ghost" style="font-size:14px; border:1px solid var(--border-md); border-radius:9999px; padding:10px 20px; width:100%; justify-content:center;" aria-label="Contacter l'équipe Studio pour le plan à 399 euros par mois">
+                  Contacter l'équipe Studio
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /pricing-grid -->
+    </div>
+  </section>
+
+  <!-- ── Comparison Table ── -->
+  <section id="compare" class="section" aria-labelledby="compare-heading">
+    <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="eyebrow">↦ Comparaison</span>
+        <h2 class="section-h2" id="compare-heading">Comparaison détaillée</h2>
+      </div>
+      <div class="comparison-wrap" data-reveal>
+        <table class="comparison-table" role="table">
+          <thead>
+            <tr>
+              <th scope="col">Fonctionnalité</th>
+              <th scope="col">Starter</th>
+              <th scope="col" class="col-pro">Pro</th>
+              <th scope="col">Studio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="section-row"><td colspan="4">Core</td></tr>
+            <tr class="data-row">
+              <td>Projets actifs</td>
+              <td><span class="cell-val">1</span></td>
+              <td class="col-pro"><span class="cell-val">5</span></td>
+              <td><span class="cell-val">Illimités</span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Design system D-Studio</td>
+              <td><span class="cell-val">Base</span></td>
+              <td class="col-pro"><span class="cell-val">Complet</span></td>
+              <td><span class="cell-val">White-label</span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Export Figma</td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+              <td class="col-pro"><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Composants premium</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Variants illimités</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="section-row"><td colspan="4">Collaboration</td></tr>
+            <tr class="data-row">
+              <td>Membres d'équipe</td>
+              <td><span class="cell-val">3</span></td>
+              <td class="col-pro"><span class="cell-val">15</span></td>
+              <td><span class="cell-val">Illimités</span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Handoff dev (Inspect)</td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+              <td class="col-pro"><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Intégrations CI/CD</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Figma MCP intégration</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="section-row"><td colspan="4">Support</td></tr>
+            <tr class="data-row">
+              <td>Support email</td>
+              <td><span class="cell-val">48h</span></td>
+              <td class="col-pro"><span class="cell-val">4h</span></td>
+              <td><span class="cell-val">1h</span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Account manager</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+            <tr class="data-row">
+              <td>SLA garanti</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td><span class="cell-val">99.9%</span></td>
+            </tr>
+            <tr class="data-row">
+              <td>Support 24/7</td>
+              <td><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td class="col-pro"><span class="cell-dash" aria-label="Non inclus">—</span></td>
+              <td><span class="cell-check" aria-label="Inclus"><svg width="16" height="16" fill="none" stroke="#ff5701" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Marquee logos ── -->
+  <section class="section-sm" aria-hidden="true">
+    <div class="marquee-outer">
+      <div class="marquee-track">
+        <!-- track 1 -->
+        <span class="marquee-item">ACME</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">LOOM</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">COBALT</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">FLUX</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">OMEGA</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">PORTAL</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">ZAPHOD</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">MERIDIAN</span><span class="marquee-sep">·</span>
+        <!-- track 2 (duplicate for seamless loop) -->
+        <span class="marquee-item">ACME</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">LOOM</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">COBALT</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">FLUX</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">OMEGA</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">PORTAL</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">ZAPHOD</span><span class="marquee-sep">·</span>
+        <span class="marquee-item">MERIDIAN</span><span class="marquee-sep">·</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section id="faq" class="section" aria-labelledby="faq-heading">
+    <div class="container" style="max-width:720px;">
+      <div class="section-header" data-reveal>
+        <span class="eyebrow">↦ FAQ</span>
+        <h2 class="section-h2" id="faq-heading">Questions fréquentes</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq-item">
+          <summary>Puis-je changer de plan à tout moment ?<span class="faq-chevron" aria-hidden="true">›</span></summary>
+          <p class="faq-body">Oui. Le changement prend effet immédiatement et la différence est calculée au prorata sur votre prochaine facture.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qu'est-ce que le design system D-Studio inclut ?<span class="faq-chevron" aria-hidden="true">›</span></summary>
+          <p class="faq-body">Un ensemble de tokens (couleurs, typographie, espacement), des composants React + Tailwind documentés, et les fichiers Figma correspondants. La version complète inclut les variants dark/light, les états interactifs et les patterns de layout.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Le white-label Studio couvre-t-il les exports clients ?<span class="faq-chevron" aria-hidden="true">›</span></summary>
+          <p class="faq-body">Oui. Tous les exports (Figma, code, PDF) sont dépourvus de mention D-Studio. Vous pouvez livrer sous votre propre marque.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Y a-t-il un engagement minimum ?<span class="faq-chevron" aria-hidden="true">›</span></summary>
+          <p class="faq-body">Non. Facturation mensuelle, résiliation à tout moment en fin de période. Nous proposons aussi un tarif annuel avec 2 mois offerts.</p>
+        </details>
+        <details class="faq-item">
+          <summary>L'accès est-il immédiat à l'inscription ?<span class="faq-chevron" aria-hidden="true">›</span></summary>
+          <p class="faq-body">Oui pour Starter et Pro — accès instantané après paiement. Studio nécessite un appel de 30 min pour cadrer les intégrations sur mesure.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Que se passe-t-il à l'expiration d'un projet ?<span class="faq-chevron" aria-hidden="true">›</span></summary>
+          <p class="faq-body">Les assets restent exportables en lecture seule pendant 90 jours. Aucune donnée supprimée sans votre accord explicite.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Closing band ── -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="closing-band" data-reveal>
+        <h2 class="closing-h2">Prêt à construire quelque chose de sérieux ?</h2>
+        <p class="closing-lede">Rejoignez les équipes qui font confiance à D-Studio pour leur design system et leur identité produit.</p>
+        <button type="button" class="cta-primary" aria-label="Démarrer avec le plan Pro — 149 euros par mois, annulation à tout moment">
+          <span class="cta-label">Démarrer avec Pro</span>
+          <span class="cta-arrow-wrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </button>
+        <p style="margin-top:16px; font-size:12px; color:var(--muted30); font-family:var(--f-mono);">Sans engagement · Résiliation à tout moment</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="section-sm">
+    <div class="container">
+      <div class="site-footer">
+        <span class="footer-copy">© 2026 D-Studio — Tous droits réservés</span>
+        <nav class="footer-links" aria-label="Liens footer">
+          <a href="#">Mentions légales</a>
+          <a href="#">CGU</a>
+          <a href="#">Politique de confidentialité</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /content-layer -->
+
+<script>
+  // ── Vanta HALO bg ──
+  try {
+    VANTA.HALO({
+      el: "#vanta-bg",
+      mouseControls: true, touchControls: true, gyroControls: false,
+      minHeight: 200.00, minWidth: 200.00,
+      baseColor: 0x140502,
+      backgroundColor: 0x0a0a0c,
+      amplitudeFactor: 1.20,
+      size: 1.5,
+      yOffset: 0.0,
+      xOffset: 0.0,
+    });
+  } catch(e) {
+    // fallback: animated css conic-gradient already on #vanta-bg
+    document.getElementById("vanta-bg").style.animation = "fallback-halo 12s ease infinite";
+    document.getElementById("vanta-bg").style.backgroundSize = "400% 400%";
+  }
+
+  // ── Vanilla Tilt — disable on mobile ──
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  if (!isMobile) {
+    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+      max: 6, perspective: 1400, speed: 800, glare: true, "max-glare": 0.16,
+      easing: "cubic-bezier(.03,.98,.52,.99)",
+    });
+  }
+
+  // ── GSAP reveal ──
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        gsap.to(e.target, {
+          y: 0, opacity: 1, filter: "blur(0px)",
+          duration: 0.9, ease: "expo.out",
+          delay: Array.from(e.target.parentElement.children).indexOf(e.target) * 0.07
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll("[data-reveal]").forEach(el => {
+    gsap.set(el, { y: 24, opacity: 0, filter: "blur(8px)" });
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
