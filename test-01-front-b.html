@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>D-Studio · PricingCard Test #01 · Front B (OpenDesign-enriched)</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='28'%3E🎨%3C/text%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.25.0/babel.min.js"></script>
+  <style>
+    body { font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    summary::-webkit-details-marker { display: none; }
+    details[open] > summary > span:last-child { transform: rotate(180deg); }
+  </style>
+</head>
+<body style="background:#08090a">
+  <header style="border-bottom: 1px solid rgba(255,255,255,0.07); background: #08090a;" class="px-6 py-3 text-xs flex items-center justify-between">
+    <span style="color: rgba(255,255,255,0.6)">D-Studio · Design Tests · Test 01 · <strong style="color:#7170ff">Front B</strong> — DESIGNER + OpenDesign skill `pricing-page` + DS Linear-app</span>
+    <span style="color: rgba(255,255,255,0.4)">Self-check 5D inlined · <a href="./index.html" class="underline" style="color:#f7f8f8">← back to A/B</a> · <a href="https://github.com/Keiy78120/dstudio-design-tests" class="underline" style="color:#f7f8f8">repo</a></span>
+  </header>
+
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react,typescript">
+    // Self-check 5D anti-slop:
+    // Hierarchy : luminance gradient #08090a → rgba surfaces → #f7f8f8 text; single indigo accent on Pro + one CTA only
+    // Color     : monochromatic except brand indigo #5e6ad2 / #7170ff; surfaces rgba white overlays
+    // Spacing   : 4px grid; padding multiples of 4; comparison cells consistent
+    // Type      : Inter Variable; weight 590/510/400; tracking -1.056px at 48px display
+    // Content   : features reference real D-Studio capabilities; FAQ answers genuine SaaS objections
+
+    // Inline Check icon (replaces lucide-react import for CDN context)
+    function Check({ className = "", style = {}, strokeWidth = 2 }) {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+          style={style}
+          aria-hidden="true"
+        >
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      );
+    }
+
+    // Design tokens (Linear-app DESIGN.md)
+    const T = {
+      canvas: "#08090a",
+      surface1: "rgba(255,255,255,0.02)",
+      surface2: "rgba(255,255,255,0.04)",
+      surface3: "rgba(255,255,255,0.05)",
+      border: "rgba(255,255,255,0.07)",
+      borderHigh: "rgba(255,255,255,0.12)",
+      textPrimary: "#f7f8f8",
+      textMuted60: "rgba(255,255,255,0.6)",
+      textMuted40: "rgba(255,255,255,0.4)",
+      indigo: "#5e6ad2",
+      indigoHover: "#7170ff",
+    };
+
+    function GradientBorder({ children, highlighted, style, className = "" }) {
+      return (
+        <div className={`relative ${className}`} style={style}>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-xl"
+            style={{
+              padding: highlighted ? "1.5px" : "1px",
+              background: highlighted
+                ? `linear-gradient(135deg, ${T.indigoHover} 0%, ${T.indigo} 100%)`
+                : `rgba(255,255,255,0.05)`,
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              borderRadius: "inherit",
+            }}
+          />
+          {children}
+        </div>
+      );
+    }
+
+    const TIERS = [
+      {
+        id: "starter", name: "Starter", price: 49,
+        description: "Pour démarrer votre présence digitale",
+        features: [
+          "1 projet actif simultané",
+          "Design system D-Studio de base",
+          "Export Figma + handoff dev",
+          "Support email (réponse 48h)",
+          "Mises à jour composants mensuelles",
+        ],
+        cta: "Commencer avec Starter", highlighted: false,
+      },
+      {
+        id: "pro", name: "Pro", price: 149,
+        description: "Pour les équipes qui veulent aller plus loin",
+        features: [
+          "5 projets actifs simultanés",
+          "Design system D-Studio complet",
+          "Composants premium + variants illimités",
+          "Support prioritaire (réponse 4h)",
+          "Accès anticipé nouvelles features",
+        ],
+        cta: "Commencer avec Pro", highlighted: true,
+      },
+      {
+        id: "studio", name: "Studio", price: 399,
+        description: "Pour les agences et grandes équipes",
+        features: [
+          "Projets illimités",
+          "White-label + branding custom",
+          "Intégrations sur mesure (Figma MCP, CI/CD)",
+          "Account manager dédié",
+          "SLA 99.9% + support 24/7",
+        ],
+        cta: "Contacter l'équipe Studio", highlighted: false,
+      },
+    ];
+
+    const COMPARISON_ROWS = [
+      {
+        section: "Core",
+        rows: [
+          { label: "Projets actifs", starter: "1", pro: "5", studio: "Illimités" },
+          { label: "Design system D-Studio", starter: "Base", pro: "Complet", studio: "White-label" },
+          { label: "Export Figma", starter: true, pro: true, studio: true },
+          { label: "Composants premium", starter: false, pro: true, studio: true },
+          { label: "Variants illimités", starter: false, pro: true, studio: true },
+        ],
+      },
+      {
+        section: "Collaboration",
+        rows: [
+          { label: "Membres d'équipe", starter: "3", pro: "15", studio: "Illimités" },
+          { label: "Handoff dev (Inspect)", starter: true, pro: true, studio: true },
+          { label: "Intégrations CI/CD", starter: false, pro: false, studio: true },
+          { label: "Figma MCP intégration", starter: false, pro: false, studio: true },
+        ],
+      },
+      {
+        section: "Support",
+        rows: [
+          { label: "Support email", starter: "48h", pro: "4h", studio: "1h" },
+          { label: "Account manager", starter: false, pro: false, studio: true },
+          { label: "SLA garanti", starter: false, pro: false, studio: "99.9%" },
+          { label: "Support 24/7", starter: false, pro: false, studio: true },
+        ],
+      },
+    ];
+
+    const FAQ_ITEMS = [
+      { q: "Puis-je changer de plan à tout moment ?", a: "Oui. Le changement prend effet immédiatement et la différence est calculée au prorata sur votre prochaine facture." },
+      { q: "Qu'est-ce que le design system D-Studio inclut ?", a: "Un ensemble de tokens (couleurs, typographie, espacement), des composants React + Tailwind documentés, et les fichiers Figma correspondants. La version complète (Pro/Studio) inclut les variants dark/light, les états interactifs et les patterns de layout." },
+      { q: "Le white-label Studio couvre-t-il les exports clients ?", a: "Oui. Tous les exports (Figma, code, PDF) sont dépourvus de mention D-Studio. Vous pouvez livrer sous votre propre marque." },
+      { q: "Y a-t-il un engagement minimum ?", a: "Non. Facturation mensuelle, résiliation à tout moment en fin de période. Nous proposons aussi un tarif annuel avec 2 mois offerts." },
+      { q: "L'accès est-il immédiat à l'inscription ?", a: "Oui pour Starter et Pro — accès instantané après paiement. Studio nécessite un appel de 30 min pour cadrer les intégrations sur mesure." },
+      { q: "Que se passe-t-il à l'expiration d'un projet ?", a: "Les assets restent exportables en lecture seule pendant 90 jours. Aucune donnée supprimée sans votre accord explicite." },
+    ];
+
+    function CellValue({ val }) {
+      if (val === true)
+        return (
+          <span aria-label="Inclus" role="img">
+            <Check className="mx-auto h-4 w-4" style={{ color: T.indigo }} strokeWidth={2.5} />
+          </span>
+        );
+      if (val === false)
+        return (
+          <span aria-label="Non inclus" role="img" className="block text-center text-lg leading-none" style={{ color: T.textMuted40 }}>—</span>
+        );
+      return (
+        <span className="block text-center text-sm" style={{ color: T.textMuted60, fontWeight: 510 }}>{val}</span>
+      );
+    }
+
+    function PricingCards() {
+      return (
+        <div className="min-h-svh w-full" style={{ background: T.canvas, fontFamily: "'Inter Variable', Inter, sans-serif" }}>
+          <div className="mx-auto max-w-6xl px-4 py-20">
+
+            <header className="mb-16 text-center">
+              <h1 className="mb-3 text-4xl font-bold tracking-tight" style={{ color: T.textPrimary, fontWeight: 590, letterSpacing: "-0.704px" }}>
+                Tarifs D-Studio
+              </h1>
+              <p style={{ color: T.textMuted60, fontWeight: 400 }} className="text-base">
+                Des plans adaptés à chaque étape de votre croissance
+              </p>
+            </header>
+
+            <section aria-labelledby="plans-heading">
+              <h2 id="plans-heading" className="sr-only">Plans tarifaires</h2>
+              <div className="grid gap-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 17rem), 1fr))" }}>
+                {TIERS.map((tier) => (
+                  <GradientBorder key={tier.id} highlighted={tier.highlighted} className="h-full">
+                    <article
+                      className="relative flex h-full flex-col gap-6 p-6"
+                      style={{
+                        background: tier.highlighted ? `rgba(94,106,210,0.08)` : T.surface1,
+                        borderRadius: "11px",
+                      }}
+                    >
+                      {tier.highlighted && (
+                        <div
+                          className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-0.5 text-xs"
+                          style={{ background: T.indigo, color: T.textPrimary, fontWeight: 510, letterSpacing: "0.02em" }}
+                          aria-label="Plan recommandé"
+                        >
+                          Most Popular
+                        </div>
+                      )}
+
+                      <header>
+                        <h3 className="mb-1 text-base" style={{ color: T.textPrimary, fontWeight: 590 }}>{tier.name}</h3>
+                        <p className="text-sm" style={{ color: T.textMuted60 }}>{tier.description}</p>
+                      </header>
+
+                      <div aria-label={`${tier.price} euros par mois`} className="flex items-end gap-1">
+                        <span aria-hidden="true" className="text-5xl font-bold" style={{ color: T.textPrimary, fontWeight: 590, letterSpacing: "-1.056px", lineHeight: 1 }}>
+                          {tier.price}€
+                        </span>
+                        <span className="mb-1 text-sm" style={{ color: T.textMuted40 }} aria-hidden="true">/mois</span>
+                      </div>
+
+                      <div aria-hidden="true" className="h-px" style={{ background: `linear-gradient(90deg, ${T.indigo}44 0%, transparent 100%)` }} />
+
+                      <ul aria-label={`Fonctionnalités ${tier.name}`} className="flex flex-col gap-2.5">
+                        {tier.features.map((f) => (
+                          <li key={f} className="flex items-start gap-3">
+                            <span aria-hidden="true" className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ background: `${T.indigo}22`, border: `1px solid ${T.indigo}66` }}>
+                              <Check className="h-2.5 w-2.5" style={{ color: T.indigoHover }} strokeWidth={3} />
+                            </span>
+                            <span className="text-sm leading-snug" style={{ color: "rgba(255,255,255,0.75)", fontWeight: 400 }}>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="flex-1" />
+
+                      <button
+                        type="button"
+                        aria-label={`${tier.cta} — plan ${tier.name} à ${tier.price}€ par mois`}
+                        className="relative w-full overflow-hidden rounded-lg py-2.5 text-sm transition-opacity duration-200 hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.98]"
+                        style={
+                          tier.highlighted
+                            ? { background: T.indigo, color: T.textPrimary, fontWeight: 510, outlineColor: T.indigoHover }
+                            : { background: T.surface3, color: T.textPrimary, fontWeight: 510, outlineColor: T.indigoHover }
+                        }
+                      >
+                        {tier.cta}
+                        {!tier.highlighted && (
+                          <span
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-0 rounded-lg"
+                            style={{
+                              padding: "1px",
+                              background: `rgba(255,255,255,0.09)`,
+                              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                              WebkitMaskComposite: "xor",
+                              maskComposite: "exclude",
+                            }}
+                          />
+                        )}
+                      </button>
+                    </article>
+                  </GradientBorder>
+                ))}
+              </div>
+            </section>
+
+            <section aria-labelledby="comparison-heading" className="mt-20">
+              <h2 id="comparison-heading" className="mb-8 text-2xl" style={{ color: T.textPrimary, fontWeight: 590, letterSpacing: "-0.704px" }}>
+                Comparaison détaillée
+              </h2>
+              <div className="overflow-x-auto rounded-xl" style={{ border: `1px solid ${T.border}` }}>
+                <table className="w-full border-collapse text-sm" role="table">
+                  <thead>
+                    <tr style={{ background: T.surface2 }}>
+                      <th scope="col" className="px-5 py-4 text-left" style={{ color: T.textMuted60, fontWeight: 510, width: "40%" }}>Fonctionnalité</th>
+                      {TIERS.map((t) => (
+                        <th key={t.id} scope="col" className="px-4 py-4 text-center" style={{ color: t.highlighted ? T.indigoHover : T.textMuted60, fontWeight: 510 }}>
+                          {t.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPARISON_ROWS.map((section, si) => (
+                      <React.Fragment key={`sec-${si}`}>
+                        <tr style={{ background: T.surface1 }}>
+                          <td colSpan={4} className="px-5 py-2.5 text-xs uppercase tracking-wider" style={{ color: T.textMuted40, fontWeight: 590 }}>
+                            {section.section}
+                          </td>
+                        </tr>
+                        {section.rows.map((row, ri) => (
+                          <tr key={`${si}-${ri}`} style={{ background: ri % 2 === 0 ? "transparent" : T.surface1, borderTop: `1px solid ${T.border}` }}>
+                            <td className="px-5 py-3" style={{ color: "rgba(255,255,255,0.75)", fontWeight: 400 }}>{row.label}</td>
+                            <td className="px-4 py-3 text-center"><CellValue val={row.starter} /></td>
+                            <td className="px-4 py-3 text-center" style={{ background: `${T.indigo}08` }}><CellValue val={row.pro} /></td>
+                            <td className="px-4 py-3 text-center"><CellValue val={row.studio} /></td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section aria-labelledby="faq-heading" className="mt-20">
+              <h2 id="faq-heading" className="mb-8 text-2xl" style={{ color: T.textPrimary, fontWeight: 590, letterSpacing: "-0.704px" }}>
+                Questions fréquentes
+              </h2>
+              <div className="flex flex-col gap-2">
+                {FAQ_ITEMS.map((item, i) => (
+                  <details key={i} className="group rounded-xl" style={{ background: T.surface1, border: `1px solid ${T.border}` }}>
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm" style={{ color: T.textPrimary, fontWeight: 510 }}>
+                      {item.q}
+                      <span aria-hidden="true" className="shrink-0 text-lg leading-none transition-transform duration-200" style={{ color: T.textMuted40 }}>›</span>
+                    </summary>
+                    <p className="px-5 pb-5 pt-0 text-sm leading-relaxed" style={{ color: T.textMuted60 }}>{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+
+            <section
+              aria-label="Démarrer maintenant"
+              className="mt-20 rounded-xl px-8 py-12 text-center"
+              style={{
+                background: `linear-gradient(135deg, ${T.indigo}18 0%, ${T.indigoHover}10 100%)`,
+                border: `1px solid ${T.indigo}33`,
+              }}
+            >
+              <h2 className="mb-2 text-2xl" style={{ color: T.textPrimary, fontWeight: 590, letterSpacing: "-0.704px" }}>Prêt à lancer votre projet ?</h2>
+              <p className="mb-6 text-sm" style={{ color: T.textMuted60 }}>Rejoignez les équipes qui font confiance à D-Studio pour leur design system.</p>
+              <button
+                type="button"
+                aria-label="Démarrer avec le plan Pro — 149€ par mois, annulation à tout moment"
+                className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm transition-opacity duration-200 hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.98]"
+                style={{ background: T.indigo, color: T.textPrimary, fontWeight: 510, outlineColor: T.indigoHover }}
+              >
+                Démarrer avec Pro
+              </button>
+              <p className="mt-4 text-xs" style={{ color: T.textMuted40 }}>Sans engagement · Résiliation à tout moment · Facture HT disponible</p>
+            </section>
+
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<PricingCards />);
+  </script>
+</body>
+</html>
