@@ -362,10 +362,14 @@ button { border: none; cursor: pointer; background: none; font-family: var(--f-b
 .course-content {
   position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 24px 28px;
 }
-.course-title { font-family: var(--f-disp); font-weight: 700; font-size: 28px; letter-spacing: -0.02em; color: var(--cream); line-height: 1; margin-bottom: 6px; }
-.course-desc { font-size: 13px; color: rgba(243,238,231,0.8); line-height: 1.45; margin-bottom: 10px; }
-.course-link { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(243,238,231,0.65); }
-.course-niveau { display: inline-block; font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(243,238,231,0.6); border: 1px solid rgba(243,238,231,0.2); border-radius: 9999px; padding: 3px 10px; margin-bottom: 8px; }
+.course-title { font-family: var(--f-disp); font-weight: 700; font-size: 28px; letter-spacing: -0.02em; color: var(--cream); line-height: 1; margin-bottom: 8px; }
+.course-tagline { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(243,238,231,0.55); margin-bottom: 14px; }
+.course-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cream); background: rgba(243,238,231,0.08); border: 1px solid rgba(243,238,231,0.14); border-radius: 9999px; padding: 8px 14px; cursor: pointer; transition: background 200ms, border-color 200ms; text-decoration: none; }
+.course-link:hover, .course-link:focus-visible { background: rgba(200,50,26,0.92); border-color: var(--rouge); outline: none; }
+.course-link svg { width: 11px; height: 11px; transition: transform 200ms; }
+.course-link:hover svg { transform: translateX(2px); }
+/* legacy course-desc + course-niveau retained for accessibility fallback but visually consolidated */
+.course-desc, .course-niveau { display: none; }
 .card-boxing { grid-column: 1/6; grid-row: 1/3; }
 .card-boxing .course-title { font-size: 44px; }
 .card-cycle   { grid-column: 6/9; grid-row: 1/2; }
@@ -404,20 +408,149 @@ button { border: none; cursor: pointer; background: none; font-family: var(--f-b
 .stat-num.rouge { color: var(--rouge); }
 .stat-label { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-d); margin-top: 6px; }
 
-/* ── Planning ── */
+/* ── Planning hub (interactif) ── */
 .planning-section { background: var(--cream); padding: 80px 64px; }
-.planning-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 40px; }
-.planning-table th {
-  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--muted-l); padding: 14px 12px; text-align: left;
-  border-bottom: 1px solid var(--b-light); background: var(--cream);
-  position: sticky; top: 0;
+
+/* Chips filter */
+.planning-toolbar {
+  display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between;
+  margin-top: 36px; padding-bottom: 20px; border-bottom: 1px solid var(--b-light);
 }
-.planning-table td { padding: 12px; border-bottom: 1px solid var(--b-light); color: var(--muted-l); vertical-align: top; }
-.planning-table td .slot { font-size: 13px; font-weight: 500; color: var(--charcoal); }
-.planning-table td .heure { font-family: var(--f-mono); font-size: 10px; color: var(--muted-l); display: block; margin-bottom: 2px; }
-.slot-phare { color: var(--rouge) !important; font-weight: 600; }
+.planning-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.planning-chip {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted-l); background: transparent; border: 1px solid var(--b-light); border-radius: 9999px;
+  padding: 8px 14px; cursor: pointer; transition: all 200ms var(--ease); white-space: nowrap;
+}
+.planning-chip:hover { color: var(--charcoal); border-color: var(--charcoal); }
+.planning-chip[aria-pressed="true"] { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+.planning-chip .dot { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: var(--rouge); margin-right: 6px; vertical-align: middle; opacity: 0.7; }
+.planning-fav-count {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted-l); display: inline-flex; align-items: center; gap: 6px;
+}
+.planning-fav-count .star { color: var(--rouge); font-size: 13px; }
+.planning-fav-count strong { color: var(--charcoal); font-weight: 600; }
+
+/* Grid jours */
+.planning-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-top: 28px;
+}
+.planning-day {
+  background: rgba(14,12,10,0.02); border: 1px solid var(--b-light); border-radius: 16px;
+  padding: 16px 12px; display: flex; flex-direction: column; gap: 8px; min-height: 280px;
+}
+.planning-day-name {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted-l); padding-bottom: 8px; border-bottom: 1px solid var(--b-light); margin-bottom: 4px;
+  text-align: center;
+}
+.planning-day.is-today .planning-day-name { color: var(--rouge); }
+.planning-day.is-today { background: rgba(200,50,26,0.04); border-color: rgba(200,50,26,0.18); }
+
+/* Slot button */
+.planning-slot-btn {
+  position: relative;
+  background: var(--cream); border: 1px solid var(--b-light); border-radius: 10px;
+  padding: 10px 10px 10px 12px; text-align: left; cursor: pointer; transition: all 220ms var(--ease);
+  display: flex; flex-direction: column; gap: 2px;
+  font-family: inherit; color: var(--charcoal);
+}
+.planning-slot-btn:hover, .planning-slot-btn:focus-visible {
+  border-color: var(--charcoal); transform: translateY(-1px);
+  box-shadow: 0 6px 18px -10px rgba(14,12,10,0.25); outline: none;
+}
+.planning-slot-btn.is-hidden { display: none; }
+.planning-slot-btn .slot-heure {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--muted-l);
+}
+.planning-slot-btn .slot-name {
+  font-size: 12.5px; font-weight: 500; color: var(--charcoal); line-height: 1.2;
+}
+.planning-slot-btn.is-phare { border-color: rgba(200,50,26,0.45); background: rgba(200,50,26,0.04); }
+.planning-slot-btn.is-phare .slot-name { color: var(--rouge); font-weight: 600; }
+.planning-slot-btn.is-fav .slot-fav-mark {
+  position: absolute; top: 6px; right: 8px; color: var(--rouge); font-size: 11px; line-height: 1; opacity: 1;
+}
+.slot-fav-mark { position: absolute; top: 6px; right: 8px; color: var(--muted-l); font-size: 11px; line-height: 1; opacity: 0; transition: opacity 200ms; }
+.planning-day-empty {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted-l); text-align: center; padding: 16px 4px; opacity: 0.6;
+}
+
 .planning-cta { margin-top: 28px; text-align: center; }
+
+/* Modal */
+.slot-modal {
+  position: fixed; inset: 0; z-index: 220;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 280ms var(--ease), visibility 0s linear 280ms;
+}
+.slot-modal.is-open { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 280ms var(--ease); }
+.slot-modal-backdrop {
+  position: absolute; inset: 0; background: rgba(14,12,10,0.62);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.slot-modal-card {
+  position: relative; z-index: 1;
+  background: var(--cream); color: var(--charcoal);
+  border-radius: 24px; padding: 32px 28px 28px;
+  width: min(440px, 100%); max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 32px 80px -20px rgba(14,12,10,0.45);
+  transform: translateY(20px) scale(0.98); transition: transform 320ms var(--ease);
+}
+.slot-modal.is-open .slot-modal-card { transform: translateY(0) scale(1); }
+.slot-modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 36px; height: 36px; border-radius: 9999px;
+  background: transparent; border: 1px solid var(--b-light); color: var(--charcoal);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background 200ms, border-color 200ms;
+}
+.slot-modal-close:hover, .slot-modal-close:focus-visible { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); outline: none; }
+.slot-modal-eyebrow {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--rouge); margin-bottom: 10px;
+}
+.slot-modal-title {
+  font-family: var(--f-disp); font-weight: 700; font-size: 28px; letter-spacing: -0.02em;
+  color: var(--charcoal); line-height: 1.05; margin-bottom: 6px;
+}
+.slot-modal-when {
+  font-size: 14px; color: var(--muted-l); margin-bottom: 22px;
+}
+.slot-modal-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+.slot-meta-cell { padding: 12px 14px; background: rgba(14,12,10,0.04); border-radius: 12px; }
+.slot-meta-label { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); margin-bottom: 4px; }
+.slot-meta-value { font-size: 14px; font-weight: 500; color: var(--charcoal); }
+.slot-modal-desc { font-size: 14px; color: var(--muted-l); line-height: 1.55; margin-bottom: 22px; }
+.slot-modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.slot-fav-btn, .slot-essai-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 12px 18px; border-radius: 9999px; cursor: pointer; border: 1px solid; transition: all 200ms;
+  text-decoration: none;
+}
+.slot-fav-btn { background: transparent; color: var(--charcoal); border-color: var(--charcoal); }
+.slot-fav-btn[aria-pressed="true"] { background: var(--rouge); color: var(--cream); border-color: var(--rouge); }
+.slot-fav-btn:hover, .slot-fav-btn:focus-visible { background: var(--charcoal); color: var(--cream); outline: none; }
+.slot-fav-btn[aria-pressed="true"]:hover { background: #a82815; }
+.slot-essai-btn { background: var(--rouge); color: var(--cream); border-color: var(--rouge); }
+.slot-essai-btn:hover, .slot-essai-btn:focus-visible { background: #a82815; border-color: #a82815; outline: none; }
+
+@media (max-width: 900px) {
+  .planning-section { padding: 56px 20px; }
+  .planning-toolbar { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .planning-chips { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; width: 100%; }
+  .planning-chip { flex-shrink: 0; }
+  .planning-grid { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+  .planning-day { flex: 0 0 78vw; max-width: 280px; scroll-snap-align: start; min-height: auto; }
+  .slot-modal-card { padding: 28px 22px 22px; }
+  .slot-modal-title { font-size: 24px; }
+  .slot-modal-meta { grid-template-columns: 1fr; }
+}
 
 /* ── Tarifs ── */
 .tarifs-section { background: var(--canvas); padding: 80px 64px; }
@@ -1131,10 +1264,12 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
       <div class="course-overlay" aria-hidden="true"></div>
       <div class="course-rouge-veil" aria-hidden="true"></div>
       <div class="course-content">
-        <span class="course-niveau">Débutant · Intermédiaire · Avancé</span>
         <h3 class="course-title">Boxing Rounds</h3>
-        <p class="course-desc">L'instinct, le souffle, le rythme. Boxe anglaise et kick boxing, 3 niveaux. Coachs certifiés, sacs de frappe, gants fournis.</p>
-        <span class="course-link">Voir les créneaux →</span>
+        <p class="course-tagline">Boxe · 60 min · 3 niveaux</p>
+        <a href="#planning" class="course-link" data-jump-discipline="boxing" aria-label="Voir les créneaux Boxing Rounds">
+          <span>Voir créneaux</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </article>
     <!-- Power Cycle -->
@@ -1143,10 +1278,12 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
       <div class="course-overlay" aria-hidden="true"></div>
       <div class="course-rouge-veil" aria-hidden="true"></div>
       <div class="course-content">
-        <span class="course-niveau">Tous niveaux</span>
         <h3 class="course-title" style="font-size:22px;">Power Cycle</h3>
-        <p class="course-desc" style="font-size:12px;">RPM à haute cadence. 45 min, tout le corps.</p>
-        <span class="course-link" style="font-size:9px;">Voir les créneaux →</span>
+        <p class="course-tagline">Cycling · 45 min</p>
+        <a href="#planning" class="course-link" data-jump-discipline="cycle" aria-label="Voir les créneaux Power Cycle">
+          <span>Voir créneaux</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </article>
     <!-- Hammer Lift -->
@@ -1155,10 +1292,12 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
       <div class="course-overlay" aria-hidden="true"></div>
       <div class="course-rouge-veil" aria-hidden="true"></div>
       <div class="course-content">
-        <span class="course-niveau">Intermédiaire · Avancé</span>
         <h3 class="course-title" style="font-size:22px;">Hammer Lift</h3>
-        <p class="course-desc" style="font-size:12px;">Machines Hammer Strength haut de gamme. Force brute.</p>
-        <span class="course-link" style="font-size:9px;">Voir les créneaux →</span>
+        <p class="course-tagline">Force · 50 min</p>
+        <a href="#planning" class="course-link" data-jump-discipline="hammer" aria-label="Voir les créneaux Hammer Lift">
+          <span>Voir créneaux</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </article>
   </div>
@@ -1169,10 +1308,12 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
       <div class="course-overlay" aria-hidden="true"></div>
       <div class="course-rouge-veil" aria-hidden="true"></div>
       <div class="course-content">
-        <span class="course-niveau">Débutant · Intermédiaire</span>
         <h3 class="course-title">Danse Fusion</h3>
-        <p class="course-desc">Jazz, contemporain, néo-classique. L'ADN historique du club, vivant depuis 2018.</p>
-        <span class="course-link">Voir les créneaux →</span>
+        <p class="course-tagline">Jazz · Contempo · 60 min</p>
+        <a href="#planning" class="course-link" data-jump-discipline="danse" aria-label="Voir les créneaux Danse Fusion">
+          <span>Voir créneaux</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </article>
     <article class="course-card card-hiit" data-tilt data-tilt-max="4" data-tilt-perspective="1600" data-tilt-speed="900" data-tilt-glare="true" data-tilt-max-glare="0.10" data-reveal style="grid-column:4/9;grid-row:1/2;">
@@ -1180,10 +1321,12 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
       <div class="course-overlay" aria-hidden="true"></div>
       <div class="course-rouge-veil" aria-hidden="true"></div>
       <div class="course-content">
-        <span class="course-niveau">Intermédiaire · Avancé</span>
         <h3 class="course-title" style="font-size:26px;">HIIT Terrain</h3>
-        <p class="course-desc" style="font-size:12px;">30 min d'intervalles haute intensité. Résultats en 4 semaines.</p>
-        <span class="course-link" style="font-size:9px;">Voir les créneaux →</span>
+        <p class="course-tagline">Cardio intervals · 30 min</p>
+        <a href="#planning" class="course-link" data-jump-discipline="hiit" aria-label="Voir les créneaux HIIT Terrain">
+          <span>Voir créneaux</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </article>
     <article class="course-card card-sculpt" data-tilt data-tilt-max="4" data-tilt-perspective="1600" data-tilt-speed="900" data-tilt-glare="true" data-tilt-max-glare="0.10" data-reveal style="grid-column:4/9;grid-row:2/3;">
@@ -1191,10 +1334,12 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
       <div class="course-overlay" aria-hidden="true"></div>
       <div class="course-rouge-veil" aria-hidden="true"></div>
       <div class="course-content">
-        <span class="course-niveau">Tous niveaux</span>
         <h3 class="course-title" style="font-size:26px;">Body Sculpt</h3>
-        <p class="course-desc" style="font-size:12px;">Renforcement musculaire global avec poids libres. 60 min, rythme adapté.</p>
-        <span class="course-link" style="font-size:9px;">Voir les créneaux →</span>
+        <p class="course-tagline">Renfo musculaire · 60 min</p>
+        <a href="#planning" class="course-link" data-jump-discipline="sculpt" aria-label="Voir les créneaux Body Sculpt">
+          <span>Voir créneaux</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </article>
   </div>
@@ -1245,71 +1390,127 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
   </div>
 </section>
 
-<!-- ── Planning hebdo ── -->
+<!-- ── Planning hub (interactif) ── -->
 <section id="planning" class="planning-section" aria-labelledby="planning-h2">
   <div data-reveal>
-    <span class="eyebrow eyebrow-light">↦ Aperçu planning</span>
+    <span class="eyebrow eyebrow-light">↦ Aperçu planning · cliquable</span>
     <h2 class="section-title charcoal" id="planning-h2" style="margin-top:12px;">Cette semaine.</h2>
   </div>
-  <div style="overflow-x:auto;margin-top:40px;border:1px solid var(--b-light);border-radius:20px;" data-reveal>
-    <table class="planning-table" role="table" aria-label="Planning hebdomadaire des cours">
-      <thead>
-        <tr>
-          <th scope="col">Lundi</th>
-          <th scope="col">Mardi</th>
-          <th scope="col">Mercredi</th>
-          <th scope="col">Jeudi</th>
-          <th scope="col">Vendredi</th>
-          <th scope="col">Samedi</th>
-          <th scope="col">Dimanche</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="heure">07h00</span><span class="slot">Body Sculpt</span></td>
-          <td><span class="heure">07h00</span><span class="slot">HIIT Terrain</span></td>
-          <td><span class="heure">07h00</span><span class="slot">Hammer Lift</span></td>
-          <td><span class="heure">07h00</span><span class="slot slot-phare">HIIT Terrain</span></td>
-          <td><span class="heure">07h00</span><span class="slot">Body Sculpt</span></td>
-          <td><span class="heure">09h00</span><span class="slot slot-phare">Hammer Lift</span></td>
-          <td><span class="heure">10h00</span><span class="slot">Stretch Recovery</span></td>
-        </tr>
-        <tr>
-          <td><span class="heure">12h30</span><span class="slot">Stretch Recovery</span></td>
-          <td><span class="heure">12h30</span><span class="slot slot-phare">Power Cycle</span></td>
-          <td><span class="heure">12h30</span><span class="slot">Boxing Rounds</span></td>
-          <td><span class="heure">12h30</span><span class="slot">Power Cycle</span></td>
-          <td><span class="heure">12h30</span><span class="slot">HIIT Terrain</span></td>
-          <td><span class="heure">10h30</span><span class="slot">Danse Fusion</span></td>
-          <td><span class="heure">11h00</span><span class="slot">Body Sculpt</span></td>
-        </tr>
-        <tr>
-          <td><span class="heure">18h30</span><span class="slot slot-phare">Body Sculpt</span></td>
-          <td><span class="heure">18h30</span><span class="slot">Danse Fusion</span></td>
-          <td><span class="heure">19h00</span><span class="slot slot-phare">Boxing Rounds</span></td>
-          <td><span class="heure">18h30</span><span class="slot">Body Sculpt</span></td>
-          <td><span class="heure">18h00</span><span class="slot slot-phare">Danse Fusion</span></td>
-          <td><span class="heure">11h30</span><span class="slot">Boxing Rounds</span></td>
-          <td><span class="heure">15h00</span><span class="slot">Power Cycle</span></td>
-        </tr>
-        <tr>
-          <td><span class="heure">20h00</span><span class="slot">Power Cycle</span></td>
-          <td><span class="heure">20h00</span><span class="slot">HIIT Terrain</span></td>
-          <td><span class="heure">20h30</span><span class="slot">Stretch Recovery</span></td>
-          <td><span class="heure">20h00</span><span class="slot">Boxing Rounds</span></td>
-          <td><span class="heure">20h00</span><span class="slot">Hammer Lift</span></td>
-          <td><span class="heure">14h00</span><span class="slot">HIIT Terrain</span></td>
-          <td>—</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <div class="planning-toolbar" data-reveal>
+    <div class="planning-chips" role="tablist" aria-label="Filtrer par discipline">
+      <button class="planning-chip" type="button" role="tab" aria-pressed="true" data-filter="all">Toutes</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="boxing"><span class="dot"></span>Boxing</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="cycle"><span class="dot"></span>Cycle</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="hammer"><span class="dot"></span>Hammer</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="danse"><span class="dot"></span>Danse</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="hiit"><span class="dot"></span>HIIT</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="sculpt"><span class="dot"></span>Sculpt</button>
+      <button class="planning-chip" type="button" role="tab" aria-pressed="false" data-filter="stretch"><span class="dot"></span>Stretch</button>
+    </div>
+    <div class="planning-fav-count" aria-live="polite">
+      <span class="star">★</span>
+      <span><strong id="fav-count">0</strong> favoris</span>
+    </div>
   </div>
+
+  <div class="planning-grid" data-reveal>
+    <!-- Lundi -->
+    <div class="planning-day" data-day="lundi">
+      <div class="planning-day-name">Lundi</div>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="sculpt" data-cours="Body Sculpt" data-jour="Lundi" data-heure="07h00" data-coach="Emma Vasseur" data-duree="60 min"><span class="slot-heure">07h00</span><span class="slot-name">Body Sculpt</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="stretch" data-cours="Stretch Recovery" data-jour="Lundi" data-heure="12h30" data-coach="Léa Marchand" data-duree="45 min"><span class="slot-heure">12h30</span><span class="slot-name">Stretch Recovery</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn is-phare" type="button" data-slot data-discipline="sculpt" data-cours="Body Sculpt" data-jour="Lundi" data-heure="18h30" data-coach="Emma Vasseur" data-duree="60 min" data-phare="1"><span class="slot-heure">18h30</span><span class="slot-name">Body Sculpt</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="cycle" data-cours="Power Cycle" data-jour="Lundi" data-heure="20h00" data-coach="Léa Marchand" data-duree="45 min"><span class="slot-heure">20h00</span><span class="slot-name">Power Cycle</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+    <!-- Mardi -->
+    <div class="planning-day" data-day="mardi">
+      <div class="planning-day-name">Mardi</div>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="hiit" data-cours="HIIT Terrain" data-jour="Mardi" data-heure="07h00" data-coach="Karim Belkacem" data-duree="30 min"><span class="slot-heure">07h00</span><span class="slot-name">HIIT Terrain</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn is-phare" type="button" data-slot data-discipline="cycle" data-cours="Power Cycle" data-jour="Mardi" data-heure="12h30" data-coach="Léa Marchand" data-duree="45 min" data-phare="1"><span class="slot-heure">12h30</span><span class="slot-name">Power Cycle</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="danse" data-cours="Danse Fusion" data-jour="Mardi" data-heure="18h30" data-coach="Sarah Lopez" data-duree="60 min"><span class="slot-heure">18h30</span><span class="slot-name">Danse Fusion</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="hiit" data-cours="HIIT Terrain" data-jour="Mardi" data-heure="20h00" data-coach="Karim Belkacem" data-duree="30 min"><span class="slot-heure">20h00</span><span class="slot-name">HIIT Terrain</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+    <!-- Mercredi -->
+    <div class="planning-day" data-day="mercredi">
+      <div class="planning-day-name">Mercredi</div>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="hammer" data-cours="Hammer Lift" data-jour="Mercredi" data-heure="07h00" data-coach="Tony Reggiani" data-duree="50 min"><span class="slot-heure">07h00</span><span class="slot-name">Hammer Lift</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="boxing" data-cours="Boxing Rounds" data-jour="Mercredi" data-heure="12h30" data-coach="Marc Dufour" data-duree="60 min"><span class="slot-heure">12h30</span><span class="slot-name">Boxing Rounds</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn is-phare" type="button" data-slot data-discipline="boxing" data-cours="Boxing Rounds" data-jour="Mercredi" data-heure="19h00" data-coach="Marc Dufour" data-duree="60 min" data-phare="1"><span class="slot-heure">19h00</span><span class="slot-name">Boxing Rounds</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="stretch" data-cours="Stretch Recovery" data-jour="Mercredi" data-heure="20h30" data-coach="Léa Marchand" data-duree="45 min"><span class="slot-heure">20h30</span><span class="slot-name">Stretch Recovery</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+    <!-- Jeudi -->
+    <div class="planning-day" data-day="jeudi">
+      <div class="planning-day-name">Jeudi</div>
+      <button class="planning-slot-btn is-phare" type="button" data-slot data-discipline="hiit" data-cours="HIIT Terrain" data-jour="Jeudi" data-heure="07h00" data-coach="Karim Belkacem" data-duree="30 min" data-phare="1"><span class="slot-heure">07h00</span><span class="slot-name">HIIT Terrain</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="cycle" data-cours="Power Cycle" data-jour="Jeudi" data-heure="12h30" data-coach="Léa Marchand" data-duree="45 min"><span class="slot-heure">12h30</span><span class="slot-name">Power Cycle</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="sculpt" data-cours="Body Sculpt" data-jour="Jeudi" data-heure="18h30" data-coach="Emma Vasseur" data-duree="60 min"><span class="slot-heure">18h30</span><span class="slot-name">Body Sculpt</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="boxing" data-cours="Boxing Rounds" data-jour="Jeudi" data-heure="20h00" data-coach="Marc Dufour" data-duree="60 min"><span class="slot-heure">20h00</span><span class="slot-name">Boxing Rounds</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+    <!-- Vendredi -->
+    <div class="planning-day" data-day="vendredi">
+      <div class="planning-day-name">Vendredi</div>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="sculpt" data-cours="Body Sculpt" data-jour="Vendredi" data-heure="07h00" data-coach="Emma Vasseur" data-duree="60 min"><span class="slot-heure">07h00</span><span class="slot-name">Body Sculpt</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="hiit" data-cours="HIIT Terrain" data-jour="Vendredi" data-heure="12h30" data-coach="Karim Belkacem" data-duree="30 min"><span class="slot-heure">12h30</span><span class="slot-name">HIIT Terrain</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn is-phare" type="button" data-slot data-discipline="danse" data-cours="Danse Fusion" data-jour="Vendredi" data-heure="18h00" data-coach="Sarah Lopez" data-duree="60 min" data-phare="1"><span class="slot-heure">18h00</span><span class="slot-name">Danse Fusion</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="hammer" data-cours="Hammer Lift" data-jour="Vendredi" data-heure="20h00" data-coach="Tony Reggiani" data-duree="50 min"><span class="slot-heure">20h00</span><span class="slot-name">Hammer Lift</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+    <!-- Samedi -->
+    <div class="planning-day" data-day="samedi">
+      <div class="planning-day-name">Samedi</div>
+      <button class="planning-slot-btn is-phare" type="button" data-slot data-discipline="hammer" data-cours="Hammer Lift" data-jour="Samedi" data-heure="09h00" data-coach="Tony Reggiani" data-duree="50 min" data-phare="1"><span class="slot-heure">09h00</span><span class="slot-name">Hammer Lift</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="danse" data-cours="Danse Fusion" data-jour="Samedi" data-heure="10h30" data-coach="Sarah Lopez" data-duree="60 min"><span class="slot-heure">10h30</span><span class="slot-name">Danse Fusion</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="boxing" data-cours="Boxing Rounds" data-jour="Samedi" data-heure="11h30" data-coach="Marc Dufour" data-duree="60 min"><span class="slot-heure">11h30</span><span class="slot-name">Boxing Rounds</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="hiit" data-cours="HIIT Terrain" data-jour="Samedi" data-heure="14h00" data-coach="Karim Belkacem" data-duree="30 min"><span class="slot-heure">14h00</span><span class="slot-name">HIIT Terrain</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+    <!-- Dimanche -->
+    <div class="planning-day" data-day="dimanche">
+      <div class="planning-day-name">Dimanche</div>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="stretch" data-cours="Stretch Recovery" data-jour="Dimanche" data-heure="10h00" data-coach="Léa Marchand" data-duree="45 min"><span class="slot-heure">10h00</span><span class="slot-name">Stretch Recovery</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="sculpt" data-cours="Body Sculpt" data-jour="Dimanche" data-heure="11h00" data-coach="Emma Vasseur" data-duree="60 min"><span class="slot-heure">11h00</span><span class="slot-name">Body Sculpt</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+      <button class="planning-slot-btn" type="button" data-slot data-discipline="cycle" data-cours="Power Cycle" data-jour="Dimanche" data-heure="15h00" data-coach="Léa Marchand" data-duree="45 min"><span class="slot-heure">15h00</span><span class="slot-name">Power Cycle</span><span class="slot-fav-mark" aria-hidden="true">★</span></button>
+    </div>
+  </div>
+
   <div class="planning-cta" data-reveal>
     <a href="https://www.fitness-rambouillet.com" class="cta-ghost cta-ghost-dark" aria-label="Voir le planning complet sur fitness-rambouillet.com" target="_blank" rel="noopener">
       Voir le planning complet →
     </a>
   </div>
 </section>
+
+<!-- ── Modal détail créneau ── -->
+<div class="slot-modal" id="slot-modal" role="dialog" aria-modal="true" aria-labelledby="slot-modal-title" aria-hidden="true">
+  <div class="slot-modal-backdrop" data-modal-close></div>
+  <div class="slot-modal-card">
+    <button type="button" class="slot-modal-close" id="slot-modal-close" aria-label="Fermer">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="slot-modal-eyebrow" id="slot-modal-eyebrow">↦ Créneau</div>
+    <h3 class="slot-modal-title" id="slot-modal-title">—</h3>
+    <p class="slot-modal-when" id="slot-modal-when">—</p>
+    <div class="slot-modal-meta">
+      <div class="slot-meta-cell">
+        <div class="slot-meta-label">Coach</div>
+        <div class="slot-meta-value" id="slot-modal-coach">—</div>
+      </div>
+      <div class="slot-meta-cell">
+        <div class="slot-meta-label">Durée</div>
+        <div class="slot-meta-value" id="slot-modal-duree">—</div>
+      </div>
+    </div>
+    <p class="slot-modal-desc" id="slot-modal-desc">Cours collectif inclus dans tous les abonnements. Tapis, matos et accès vestiaires fournis. Premier cours offert sans engagement.</p>
+    <div class="slot-modal-actions">
+      <button type="button" class="slot-fav-btn" id="slot-fav-btn" aria-pressed="false">
+        <span aria-hidden="true">★</span><span id="slot-fav-label">Sauvegarder</span>
+      </button>
+      <a href="#essai" class="slot-essai-btn" id="slot-essai-link" data-modal-close>
+        <span>Réserver cours d'essai</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
 
 <!-- ── Tarifs ── -->
 <section id="tarifs" class="tarifs-section" aria-labelledby="tarifs-h2">
@@ -1933,6 +2134,137 @@ body.nav-locked { position: fixed; left: 0; right: 0; width: 100%; overflow: hid
         });
       });
     }
+
+    // ── Planning hub : filtre + modal + favoris localStorage ──
+    (() => {
+      const FAV_KEY = 'df_fav_slots_v1';
+      const slots = Array.from(document.querySelectorAll('[data-slot]'));
+      const chips = Array.from(document.querySelectorAll('.planning-chip'));
+      const favCountEl = document.getElementById('fav-count');
+      const modal = document.getElementById('slot-modal');
+      if (!slots.length || !modal) return;
+
+      const slotKey = (el) => `${el.dataset.jour}|${el.dataset.heure}|${el.dataset.cours}`.toLowerCase();
+
+      const loadFavs = () => {
+        try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); }
+        catch { return new Set(); }
+      };
+      const saveFavs = (set) => {
+        try { localStorage.setItem(FAV_KEY, JSON.stringify([...set])); }
+        catch {}
+      };
+      let favs = loadFavs();
+
+      const refreshFavUI = () => {
+        slots.forEach(el => el.classList.toggle('is-fav', favs.has(slotKey(el))));
+        if (favCountEl) favCountEl.textContent = String(favs.size);
+      };
+
+      // Highlight today
+      const todayIdx = new Date().getDay(); // 0 dimanche
+      const dayOrder = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+      const todayName = dayOrder[todayIdx];
+      const todayCol = document.querySelector(`.planning-day[data-day="${todayName}"]`);
+      if (todayCol) todayCol.classList.add('is-today');
+
+      // Filter chips
+      const applyFilter = (filter) => {
+        chips.forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === filter ? 'true' : 'false'));
+        slots.forEach(el => {
+          const match = filter === 'all' || el.dataset.discipline === filter;
+          el.classList.toggle('is-hidden', !match);
+        });
+        // Days with zero visible slots → show empty marker
+        document.querySelectorAll('.planning-day').forEach(day => {
+          const visible = day.querySelectorAll('.planning-slot-btn:not(.is-hidden)').length;
+          let empty = day.querySelector('.planning-day-empty');
+          if (visible === 0) {
+            if (!empty) {
+              empty = document.createElement('div');
+              empty.className = 'planning-day-empty';
+              empty.textContent = '— rien ce jour';
+              day.appendChild(empty);
+            }
+          } else if (empty) {
+            empty.remove();
+          }
+        });
+      };
+      chips.forEach(c => c.addEventListener('click', () => applyFilter(c.dataset.filter)));
+
+      // Modal logic
+      const titleEl = document.getElementById('slot-modal-title');
+      const whenEl = document.getElementById('slot-modal-when');
+      const coachEl = document.getElementById('slot-modal-coach');
+      const dureeEl = document.getElementById('slot-modal-duree');
+      const eyebrowEl = document.getElementById('slot-modal-eyebrow');
+      const favBtn = document.getElementById('slot-fav-btn');
+      const favLabel = document.getElementById('slot-fav-label');
+      const closeBtn = document.getElementById('slot-modal-close');
+      let lastFocus = null;
+      let currentSlot = null;
+
+      const openModal = (el) => {
+        currentSlot = el;
+        lastFocus = document.activeElement;
+        titleEl.textContent = el.dataset.cours;
+        whenEl.textContent = `${el.dataset.jour} · ${el.dataset.heure}`;
+        coachEl.textContent = el.dataset.coach;
+        dureeEl.textContent = el.dataset.duree;
+        eyebrowEl.textContent = el.dataset.phare ? '↦ Créneau phare' : '↦ Créneau';
+        const k = slotKey(el);
+        const isFav = favs.has(k);
+        favBtn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+        favLabel.textContent = isFav ? 'Sauvegardé' : 'Sauvegarder';
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        if (typeof lenis !== 'undefined' && lenis) lenis.stop();
+        requestAnimationFrame(() => closeBtn.focus());
+      };
+      const closeModal = () => {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (typeof lenis !== 'undefined' && lenis) lenis.start();
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+        currentSlot = null;
+      };
+
+      slots.forEach(el => el.addEventListener('click', () => openModal(el)));
+
+      favBtn.addEventListener('click', () => {
+        if (!currentSlot) return;
+        const k = slotKey(currentSlot);
+        if (favs.has(k)) { favs.delete(k); }
+        else { favs.add(k); }
+        saveFavs(favs);
+        const isFav = favs.has(k);
+        favBtn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+        favLabel.textContent = isFav ? 'Sauvegardé' : 'Sauvegarder';
+        refreshFavUI();
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      modal.querySelectorAll('[data-modal-close]').forEach(el => el.addEventListener('click', closeModal));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+      });
+
+      // Course card jump → pre-apply discipline filter
+      document.querySelectorAll('[data-jump-discipline]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const disc = link.dataset.jumpDiscipline;
+          applyFilter(disc);
+          // smooth scroll handled by existing hash handler; we only set filter first
+        });
+      });
+
+      // Initial state
+      refreshFavUI();
+      applyFilter('all');
+    })();
   });
 </script>
 </body>
