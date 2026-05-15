@@ -158,7 +158,16 @@ Anti-slop checklist — validée avant livraison :
 
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
-html { scroll-behavior: smooth; }
+/* Lenis handles smooth scroll on desktop; native handles mobile. CSS smooth would conflict. */
+html.lenis { height: auto; }
+html.lenis.lenis-smooth { scroll-behavior: auto !important; }
+html.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+html.lenis.lenis-stopped { overflow: clip; }
+html.lenis.lenis-smooth iframe { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+}
 body {
   background: var(--canvas);
   color: var(--cream);
@@ -1651,54 +1660,93 @@ details[open] .faq-chev { transform: rotate(180deg); }
       });
     }
 
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+
     // ── GSAP scroll-reveal ──
-    if (typeof gsap !== 'undefined') {
+    // Count idx only across [data-reveal] siblings (not all children), or none if isolated.
+    if (typeof gsap !== 'undefined' && !prefersReduced) {
+      const revealIdxCache = new WeakMap();
+      const computeIdx = (el) => {
+        if (revealIdxCache.has(el)) return revealIdxCache.get(el);
+        const parent = el.parentElement;
+        if (!parent) { revealIdxCache.set(el, 0); return 0; }
+        const revealSiblings = Array.from(parent.children).filter(c => c.hasAttribute('data-reveal'));
+        const idx = Math.max(0, revealSiblings.indexOf(el));
+        revealIdxCache.set(el, idx);
+        return idx;
+      };
+
       const io = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
-          if (e.isIntersecting) {
-            const siblings = Array.from(e.target.parentElement.children);
-            const idx = siblings.indexOf(e.target);
-            gsap.to(e.target, {
-              y: 0, opacity: 1, filter: "blur(0px)",
-              duration: 0.85, ease: "expo.out",
-              delay: idx * 0.06
-            });
-            io.unobserve(e.target);
-          }
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const idx = computeIdx(e.target);
+          gsap.to(e.target, {
+            y: 0, opacity: 1, filter: "blur(0px)",
+            duration: 0.7, ease: "expo.out",
+            delay: Math.min(idx * 0.05, 0.25)
+          });
+          io.unobserve(e.target);
         });
-      }, { threshold: 0.12 });
+      }, {
+        threshold: 0.05,
+        rootMargin: '0px 0px -8% 0px'
+      });
 
       document.querySelectorAll("[data-reveal]").forEach(el => {
-        gsap.set(el, { y: 20, opacity: 0, filter: "blur(6px)" });
+        gsap.set(el, { y: 16, opacity: 0, filter: "blur(4px)" });
         io.observe(el);
+      });
+
+      // Failsafe: anything still hidden after 2.5s in viewport → force-reveal.
+      setTimeout(() => {
+        document.querySelectorAll("[data-reveal]").forEach(el => {
+          const r = el.getBoundingClientRect();
+          const inView = r.top < window.innerHeight && r.bottom > 0;
+          if (inView && parseFloat(getComputedStyle(el).opacity) < 0.5) {
+            gsap.to(el, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" });
+            io.unobserve(el);
+          }
+        });
+      }, 2500);
+    } else if (prefersReduced) {
+      document.querySelectorAll("[data-reveal]").forEach(el => {
+        el.style.opacity = '1'; el.style.transform = 'none'; el.style.filter = 'none';
       });
     }
 
-    // ── Lenis smooth scroll (respect reduced motion) ──
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (typeof Lenis !== 'undefined' && !prefersReduced) {
-      const lenis = new Lenis({
-        duration: 1.15,
+    // ── Lenis smooth scroll : desktop only, never on touch / mobile / reduced-motion ──
+    let lenis = null;
+    if (typeof Lenis !== 'undefined' && !prefersReduced && !isMobile) {
+      lenis = new Lenis({
+        duration: 1.05,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         smoothTouch: false,
         wheelMultiplier: 0.9,
+        touchMultiplier: 1.2,
       });
       function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
-      // Hash links → Lenis scrollTo
-      document.querySelectorAll('a[href^="#"]').forEach(a => {
-        a.addEventListener('click', (ev) => {
-          const id = a.getAttribute('href');
-          if (id && id.length > 1) {
-            const el = document.querySelector(id);
-            if (el) { ev.preventDefault(); lenis.scrollTo(el, { offset: -40, duration: 1.2 }); }
-          }
-        });
-      });
-    } else {
-      // No Lenis → use native scroll. html.scroll-behavior:smooth already set.
     }
+
+    // Hash links → smooth scrollTo (Lenis or native, with header offset)
+    const HEADER_OFFSET = 60;
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (ev) => {
+        const id = a.getAttribute('href');
+        if (!id || id.length <= 1) return;
+        const el = document.querySelector(id);
+        if (!el) return;
+        ev.preventDefault();
+        if (lenis) {
+          lenis.scrollTo(el, { offset: -HEADER_OFFSET, duration: 1.1 });
+        } else {
+          const top = el.getBoundingClientRect().top + window.pageYOffset - HEADER_OFFSET;
+          window.scrollTo({ top, behavior: prefersReduced ? 'auto' : 'smooth' });
+        }
+      });
+    });
 
     // ── Burger nav ──
     const burger = document.getElementById('nav-burger');
@@ -1709,12 +1757,14 @@ details[open] .faq-chev { transform: rotate(180deg); }
         navMobile.classList.remove('is-open');
         navMobile.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        if (lenis) lenis.start();
       };
       const openMenu = () => {
         burger.setAttribute('aria-expanded', 'true');
         navMobile.classList.add('is-open');
         navMobile.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        if (lenis) lenis.stop();
       };
       burger.addEventListener('click', () => {
         burger.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
