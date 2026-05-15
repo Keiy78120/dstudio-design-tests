@@ -531,8 +531,15 @@ details[open] .faq-chev { transform: rotate(180deg); }
 .section-header { margin-bottom: 0; }
 
 /* ── Promo top bar ── */
+/* z-index hierarchy:
+   promo-top: 50 (under nav)
+   floating-nav: 100 (always above promo, always clickable)
+   nav-backdrop: 180
+   nav-mobile drawer: 200
+   nav-burger: 201 (above drawer for close access)
+*/
 .promo-top {
-  position: sticky; top: 0; left: 0; right: 0; z-index: 200;
+  position: relative; z-index: 50;
   display: flex; align-items: center; justify-content: center; gap: 16px;
   padding: 11px 56px 11px 24px;
   background: linear-gradient(180deg, rgba(14,12,10,0.96) 0%, rgba(14,12,10,0.92) 100%);
