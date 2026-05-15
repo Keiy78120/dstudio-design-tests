@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.fitness-rambouillet.com/sitemap.xml
+
+# Bots IA — autorisés (visibilité 2026)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
