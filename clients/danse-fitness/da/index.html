@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DA — Danse & Fitness Rambouillet · Variantes logo, posts IG, stories</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23c8321a'/%3E%3Ctext x='50%25' y='62%25' font-size='17' font-family='serif' font-style='italic' fill='%23f3eee7' text-anchor='middle'%3EDF%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --canvas: #0e0c0a;
+    --cream: #f3eee7;
+    --muted-65: rgba(243,238,231,0.65);
+    --muted-40: rgba(243,238,231,0.4);
+    --border: rgba(243,238,231,0.08);
+    --ember: #c8321a;
+    --ember-hover: #e63d20;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--canvas);
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* film grain overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    opacity: 0.04; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence baseFrequency='0.88' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 64px 32px; }
+  header.top {
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+  }
+  .brandmark {
+    font-family: 'Fraunces', serif;
+    font-style: italic; font-weight: 800;
+    font-size: 26px; color: var(--cream);
+    letter-spacing: -0.02em;
+  }
+  .brandmark .amp { color: var(--ember); }
+  .meta-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: var(--muted-65); text-transform: uppercase; letter-spacing: 0.22em; }
+  .meta-mono a { color: var(--cream); text-decoration: none; border-bottom: 1px solid var(--border); }
+  .meta-mono a:hover { color: var(--ember); border-bottom-color: var(--ember); }
+
+  h1.hero {
+    font-family: 'Fraunces', serif;
+    font-weight: 800; font-style: italic;
+    font-size: clamp(48px, 6vw, 88px);
+    letter-spacing: -0.035em;
+    line-height: 0.94;
+    margin: 0 0 24px;
+  }
+  h1.hero em { color: var(--ember); font-style: italic; }
+  .lede {
+    font-size: clamp(16px, 1.3vw, 19px);
+    max-width: 56ch; line-height: 1.55;
+    color: var(--muted-65); font-weight: 400;
+    margin: 0 0 48px;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ember);
+    padding: 6px 14px;
+    border: 1px solid rgba(200,50,26,0.3);
+    background: rgba(200,50,26,0.05);
+    border-radius: 9999px;
+    margin: 0 0 24px;
+  }
+
+  section.block {
+    padding: 88px 0;
+    border-top: 1px solid var(--border);
+  }
+  h2.section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 800; font-style: italic;
+    font-size: clamp(36px, 4vw, 56px);
+    letter-spacing: -0.03em; line-height: 1;
+    margin: 0 0 16px;
+  }
+  .section-sub {
+    font-size: 15px; color: var(--muted-65); line-height: 1.55;
+    max-width: 60ch; margin: 0 0 40px;
+  }
+
+  /* logos grid 2×2 */
+  .logos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 768px) { .logos-grid { grid-template-columns: 1fr; } }
+  .logo-card {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background: rgba(243,238,231,0.025);
+    border: 1px solid var(--border);
+    transition: transform 600ms cubic-bezier(0.32,0.72,0,1);
+  }
+  .logo-card:hover { transform: translateY(-4px); }
+  .logo-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .logo-card .label {
+    position: absolute; bottom: 16px; left: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cream);
+    background: rgba(14,12,10,0.7);
+    backdrop-filter: blur(10px);
+    padding: 6px 12px;
+    border-radius: 9999px;
+    border: 1px solid rgba(243,238,231,0.12);
+  }
+
+  /* posts IG grid 2×2 */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 768px) { .posts-grid { grid-template-columns: 1fr; } }
+  .post-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--border);
+    background: rgba(243,238,231,0.02);
+    transition: transform 600ms cubic-bezier(0.32,0.72,0,1);
+  }
+  .post-card:hover { transform: translateY(-4px); }
+  .post-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .post-card .label {
+    position: absolute; top: 14px; left: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cream);
+    background: rgba(14,12,10,0.7);
+    backdrop-filter: blur(10px);
+    padding: 6px 12px;
+    border-radius: 9999px;
+  }
+
+  /* stories row of circles */
+  .stories-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .stories-row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 500px) { .stories-row { grid-template-columns: repeat(2, 1fr); } }
+  .story-card { text-align: center; }
+  .story-card .circle {
+    width: 100%; aspect-ratio: 1 / 1;
+    border-radius: 9999px;
+    overflow: hidden;
+    background: var(--ember);
+    border: 3px solid rgba(243,238,231,0.12);
+    box-shadow: 0 18px 40px -16px rgba(200,50,26,0.4);
+  }
+  .story-card .circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story-card .name {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted-65);
+  }
+
+  /* footer */
+  footer.foot {
+    border-top: 1px solid var(--border);
+    padding: 64px 32px;
+    display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--muted-65); letter-spacing: 0.06em;
+  }
+  footer.foot a { color: var(--cream); text-decoration: none; border-bottom: 1px solid var(--border); }
+  footer.foot a:hover { color: var(--ember); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brandmark">Danse <span class="amp">&amp;</span> Fitness</div>
+  <div class="meta-mono">
+    DIRECTION ARTISTIQUE · 2026 · <a href="../">← Landing</a> · <a href="https://www.fitness-rambouillet.com">fitness-rambouillet.com</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <span class="eyebrow">↦ NOUVELLE IDENTITÉ VISUELLE · 2026</span>
+  <h1 class="hero">Une direction artistique <em>authentique</em>.</h1>
+  <p class="lede">Quatre pistes de logo, quatre posts Instagram éditoriaux, six story highlights — tous générés sur la base de la charte D-Studio développée pour la nouvelle identité Danse &amp; Fitness Rambouillet. Palette charcoal · cream · rouge feu. Typographie Fraunces serif italique + Plus Jakarta Sans + JetBrains Mono.</p>
+
+  <section class="block">
+    <span class="eyebrow">01 · LOGOS</span>
+    <h2 class="section-title">4 pistes <em style="color:var(--ember); font-style: italic;">de</em> logotype.</h2>
+    <p class="section-sub">Chaque variante explore un angle différent : wordmark éditorial, mark abstrait + wordmark, sceau letterpress, lockup magazine masthead. Choisissez celui qui correspond le mieux à votre positionnement.</p>
+    <div class="logos-grid">
+      <div class="logo-card">
+        <img src="../../../assets/danse-fitness/logo-a.png" alt="Logo Variante A — Wordmark italique éditorial sur oxblood" loading="lazy" />
+        <div class="label">A · Wordmark éditorial</div>
+      </div>
+      <div class="logo-card">
+        <img src="../../../assets/danse-fitness/logo-b.png" alt="Logo Variante B — Mark abstrait + wordmark" loading="lazy" />
+        <div class="label">B · Mark + Wordmark</div>
+      </div>
+      <div class="logo-card">
+        <img src="../../../assets/danse-fitness/logo-c.png" alt="Logo Variante C — Sceau letterpress circulaire" loading="lazy" />
+        <div class="label">C · Sceau letterpress</div>
+      </div>
+      <div class="logo-card">
+        <img src="../../../assets/danse-fitness/logo-d.png" alt="Logo Variante D — Lockup magazine masthead" loading="lazy" />
+        <div class="label">D · Magazine masthead</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <span class="eyebrow">02 · POSTS INSTAGRAM</span>
+    <h2 class="section-title">Templates <em>éditoriaux</em>.</h2>
+    <p class="section-sub">Quatre templates de post Instagram, square 1:1, prêts à décliner. Photo B&amp;W cinéma + typographie magazine. Réutilisables semaine après semaine en variant uniquement le contenu (nom du cours, horaire, citation).</p>
+    <div class="posts-grid">
+      <div class="post-card">
+        <img src="../../../assets/danse-fitness/post-1-cours.png" alt="Post 1 — Annonce cours phare Body Sculpt avec photo boxeur B&W" loading="lazy" />
+        <div class="label">01 · Cours phare</div>
+      </div>
+      <div class="post-card">
+        <img src="../../../assets/danse-fitness/post-2-mantra.png" alt="Post 2 — Citation Bouger Transpirer Recommencer typo cream" loading="lazy" />
+        <div class="label">02 · Mantra / Citation</div>
+      </div>
+      <div class="post-card">
+        <img src="../../../assets/danse-fitness/post-3-50cours.png" alt="Post 3 — Annonce + de 50 cours collectifs split magazine" loading="lazy" />
+        <div class="label">03 · 50+ cours collectifs</div>
+      </div>
+      <div class="post-card">
+        <img src="../../../assets/danse-fitness/post-4-promo.png" alt="Post 4 — Promo 1 cours d'essai gratuit fond rouge feu" loading="lazy" />
+        <div class="label">04 · Cours d'essai gratuit</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <span class="eyebrow">03 · STORY HIGHLIGHTS</span>
+    <h2 class="section-title">6 thumbnails <em>à la une</em>.</h2>
+    <p class="section-sub">Icônes circulaires line-art cream sur fond rouge feu, cohérentes avec le sceau circulaire du logo. Pour les 6 catégories existantes du profil Instagram.</p>
+    <div class="stories-row">
+      <div class="story-card">
+        <div class="circle"><img src="../../../assets/danse-fitness/story-1-cours.png" alt="Story Cours collectifs" loading="lazy" /></div>
+        <div class="name">Cours collectifs</div>
+      </div>
+      <div class="story-card">
+        <div class="circle"><img src="../../../assets/danse-fitness/story-2-boxe.png" alt="Story Boxe" loading="lazy" /></div>
+        <div class="name">Boxe</div>
+      </div>
+      <div class="story-card">
+        <div class="circle"><img src="../../../assets/danse-fitness/story-3-cycle.png" alt="Story Cycle" loading="lazy" /></div>
+        <div class="name">Cycle</div>
+      </div>
+      <div class="story-card">
+        <div class="circle"><img src="../../../assets/danse-fitness/story-4-squash.png" alt="Story Squash" loading="lazy" /></div>
+        <div class="name">Squash</div>
+      </div>
+      <div class="story-card">
+        <div class="circle"><img src="../../../assets/danse-fitness/story-5-nutrition.png" alt="Story Nutrition" loading="lazy" /></div>
+        <div class="name">Nutrition</div>
+      </div>
+      <div class="story-card">
+        <div class="circle"><img src="../../../assets/danse-fitness/story-6-promo.png" alt="Story Promotions" loading="lazy" /></div>
+        <div class="name">Promotions</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <span class="eyebrow">04 · NOTE PROCESS</span>
+    <h2 class="section-title">Comment c'est fait.</h2>
+    <p class="section-sub">Tous les visuels sont générés via OpenAI gpt-image-1 (GPT Image 2) avec des prompts éditoriaux ultra-précis (palette + typographie + composition + ton). Les prompts sont reproductibles — vous pouvez décliner indéfiniment en gardant la cohérence de la marque. Aucun stock photo générique.</p>
+    <p class="section-sub" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Modèle · gpt-image-1 / 1024×1024 / standard quality<br>Prompts · disponibles dans le brief D-Studio<br>Coût production · ~0.04€ par image, ~0.50€ pour l'ensemble (14 visuels)</p>
+  </section>
+
+</div>
+
+<footer class="foot">
+  <div>© 2026 · D-Studio pour Danse &amp; Fitness Rambouillet</div>
+  <div><a href="../">← Retour landing</a> · <a href="https://www.fitness-rambouillet.com">fitness-rambouillet.com</a> · <a href="https://www.instagram.com/danse.fitness/">@danse.fitness</a></div>
+</footer>
+
+</body>
+</html>
