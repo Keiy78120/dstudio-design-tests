@@ -32,6 +32,7 @@ Anti-slop checklist — validée avant livraison :
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
 
 <style>
 /* ── Tokens ── */
@@ -419,12 +420,218 @@ details[open] .faq-chev { transform: rotate(180deg); }
 .section-title em { font-style: italic; color: var(--rouge); }
 .section-header { margin-bottom: 0; }
 
+/* ── Promo top bar ── */
+.promo-top {
+  position: sticky; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  padding: 11px 56px 11px 24px;
+  background: linear-gradient(180deg, rgba(14,12,10,0.96) 0%, rgba(14,12,10,0.92) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--b-dark);
+  font-family: var(--f-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.06em; color: var(--cream);
+  transition: transform 600ms var(--ease);
+}
+.promo-top.is-hidden { transform: translateY(-100%); }
+.promo-top .promo-star { color: var(--rouge); font-size: 13px; }
+.promo-top .promo-link {
+  color: var(--rouge); text-decoration: underline;
+  text-underline-offset: 3px; text-decoration-thickness: 1px;
+  text-decoration-color: rgba(200,50,26,0.5);
+  transition: color 200ms, text-decoration-color 200ms;
+}
+.promo-top .promo-link:hover { color: var(--rouge-h); text-decoration-color: var(--rouge-h); }
+.promo-top .promo-dismiss {
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  color: var(--muted-d); border-radius: 9999px;
+  transition: color 200ms, background 200ms;
+}
+.promo-top .promo-dismiss:hover { color: var(--cream); background: rgba(243,238,231,0.06); }
+
+/* ── Espaces grid (nos espaces / disciplines) ── */
+.espaces-section { padding: 110px 64px 90px; background: var(--canvas); position: relative; }
+.espaces-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-top: 44px;
+}
+.espace-card {
+  position: relative; overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: 26px;
+  background: var(--charcoal);
+  border: 1px solid var(--b-dark);
+  cursor: pointer;
+  transition: transform 600ms var(--ease), border-color 300ms;
+}
+.espace-card:hover { transform: translateY(-6px); border-color: var(--b-dark-md); }
+.espace-card-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(100%) contrast(1.06) brightness(0.74);
+  transition: filter 800ms var(--ease), transform 1.4s var(--ease);
+}
+.espace-card:hover .espace-card-img {
+  filter: grayscale(100%) contrast(1.1) brightness(0.85);
+  transform: scale(1.04);
+}
+.espace-card-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 38%, rgba(14,12,10,0.55) 70%, rgba(14,12,10,0.92) 100%);
+}
+.espace-card-content {
+  position: absolute; inset: auto 22px 22px 22px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.espace-mono {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(243,238,231,0.55);
+}
+.espace-title {
+  font-family: var(--f-disp); font-style: italic; font-weight: 800;
+  font-size: 30px; line-height: 0.96; letter-spacing: -0.03em;
+  color: var(--cream);
+}
+.espace-card:hover .espace-title { color: var(--rouge); transition: color 240ms; }
+.espace-desc {
+  font-size: 13px; line-height: 1.45; color: rgba(243,238,231,0.7);
+  margin-top: 6px;
+}
+.espace-card-pill {
+  position: absolute; top: 16px; left: 16px;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 9999px;
+  background: rgba(14,12,10,0.6); backdrop-filter: blur(8px);
+  border: 1px solid rgba(243,238,231,0.12);
+  font-family: var(--f-mono); font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream);
+}
+.espace-card.is-rouge .espace-card-pill { background: rgba(200,50,26,0.92); border-color: rgba(243,238,231,0.18); }
+
+/* ── CTA intermediate band ── */
+.cta-band-mid {
+  padding: 56px 64px; background: var(--cream); color: var(--charcoal);
+  display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center;
+  border-top: 1px solid var(--b-light); border-bottom: 1px solid var(--b-light);
+}
+.cta-band-mid.is-dark { background: var(--canvas); color: var(--cream); border-color: var(--b-dark); }
+.cta-band-mid h3 {
+  font-family: var(--f-disp); font-style: italic; font-weight: 800;
+  font-size: clamp(28px, 3.5vw, 46px); line-height: 1.02; letter-spacing: -0.025em;
+  max-width: 22ch;
+}
+.cta-band-mid h3 em { color: var(--rouge); font-style: italic; }
+.cta-band-mid p { font-size: 14.5px; color: var(--muted-l); max-width: 52ch; }
+.cta-band-mid.is-dark p { color: var(--muted-d); }
+
+/* ── Parrainage section ── */
+.parrainage-section { padding: 110px 64px; background: var(--canvas); border-top: 1px solid var(--b-dark); }
+.parrainage-grid {
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  gap: 64px; margin-top: 48px; align-items: start;
+}
+.parrainage-rewards { display: flex; flex-direction: column; gap: 20px; }
+.parrainage-card {
+  display: grid; grid-template-columns: 88px 1fr; gap: 24px; align-items: center;
+  padding: 24px 28px; background: var(--charcoal);
+  border: 1px solid var(--b-dark); border-radius: 24px;
+  transition: border-color 300ms, transform 600ms var(--ease);
+}
+.parrainage-card:hover { border-color: rgba(200,50,26,0.35); transform: translateX(4px); }
+.parrainage-num {
+  width: 64px; height: 64px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(200,50,26,0.08);
+  border: 1px solid rgba(200,50,26,0.25); border-radius: 18px;
+  font-family: var(--f-disp); font-style: italic; font-weight: 800;
+  font-size: 28px; color: var(--rouge); letter-spacing: -0.02em;
+}
+.parrainage-text { display: flex; flex-direction: column; gap: 4px; }
+.parrainage-text strong {
+  font-family: var(--f-disp); font-style: italic; font-weight: 700;
+  font-size: 20px; color: var(--cream); letter-spacing: -0.015em;
+}
+.parrainage-text span { font-size: 14px; color: var(--muted-d); line-height: 1.55; }
+.parrainage-side {
+  position: sticky; top: 100px;
+  padding: 36px 32px;
+  background: var(--charcoal);
+  border: 1px solid var(--b-dark); border-radius: 28px;
+}
+.parrainage-side h3 {
+  font-family: var(--f-disp); font-style: italic; font-weight: 800;
+  font-size: clamp(28px, 3.2vw, 38px); line-height: 1.02; letter-spacing: -0.025em;
+  margin-bottom: 12px; color: var(--cream);
+}
+.parrainage-side h3 em { color: var(--rouge); }
+.parrainage-side p { font-size: 14.5px; line-height: 1.55; color: var(--muted-d); margin-bottom: 24px; }
+.parrainage-stat {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; margin-bottom: 22px;
+  background: rgba(243,238,231,0.04); border: 1px solid var(--b-dark);
+  border-radius: 9999px;
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.08em;
+  color: var(--muted-d);
+}
+.parrainage-stat .rouge { color: var(--rouge); }
+
+/* ── Burger button ── */
+.nav-burger {
+  display: none;
+  width: 38px; height: 38px;
+  align-items: center; justify-content: center;
+  background: rgba(243,238,231,0.04);
+  border: 1px solid var(--b-dark);
+  border-radius: 9999px;
+  color: var(--cream);
+  transition: background 200ms, border-color 200ms;
+}
+.nav-burger:hover { background: rgba(243,238,231,0.08); border-color: var(--b-dark-md); }
+.nav-burger svg { width: 18px; height: 18px; }
+.nav-burger .icon-close { display: none; }
+.nav-burger[aria-expanded="true"] .icon-open { display: none; }
+.nav-burger[aria-expanded="true"] .icon-close { display: block; }
+
+/* ── Mobile overlay ── */
+.nav-mobile {
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(14,12,10,0.96);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  display: flex; flex-direction: column; padding: 80px 32px 40px;
+  gap: 8px; opacity: 0; pointer-events: none;
+  transition: opacity 400ms var(--ease);
+}
+.nav-mobile.is-open { opacity: 1; pointer-events: auto; }
+.nav-mobile a {
+  font-family: var(--f-disp); font-style: italic; font-weight: 700;
+  font-size: 44px; color: var(--cream);
+  padding: 10px 0; letter-spacing: -0.03em;
+  border-bottom: 1px solid var(--b-dark);
+  transition: color 200ms, padding-left 400ms var(--ease);
+}
+.nav-mobile a:hover { color: var(--rouge); padding-left: 12px; }
+.nav-mobile .nav-mobile-cta {
+  margin-top: 28px;
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 18px 24px; background: var(--rouge); color: var(--cream);
+  border-radius: 9999px; font-family: var(--f-body); font-style: normal;
+  font-weight: 600; font-size: 16px; border: none;
+}
+.nav-mobile .nav-mobile-meta {
+  margin-top: auto; font-family: var(--f-mono); font-size: 11px;
+  color: var(--muted-d); letter-spacing: 0.06em; line-height: 1.7;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; }
   .hero-left { padding: 120px 32px 60px; }
   .hero-right { min-height: 340px; }
-  .courses-section, .planning-section, .tarifs-section, .temoignages-section, .equipe-section, .faq-section, .closing-band, .site-footer { padding: 60px 24px; }
+  .courses-section, .planning-section, .tarifs-section, .temoignages-section, .equipe-section, .faq-section, .closing-band, .site-footer, .espaces-section, .parrainage-section { padding: 60px 24px; }
+  .cta-band-mid { padding: 44px 24px; }
   .courses-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
   .card-boxing { grid-column: 1/3; grid-row: auto; }
   .card-cycle, .card-hammer, .card-danse, .card-hiit, .card-sculpt { grid-column: auto; grid-row: auto; }
@@ -434,16 +641,35 @@ details[open] .faq-chev { transform: rotate(180deg); }
   .tarifs-grid, .temo-grid, .equipe-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .floating-nav .nav-links { display: none; }
-  .floating-nav { gap: 12px; padding: 10px 16px; }
+  .floating-nav { gap: 12px; padding: 8px 8px 8px 16px; }
+  .nav-burger { display: inline-flex; }
   .stats-bento { grid-template-columns: 1fr; }
   .closing-form { flex-direction: column; align-items: stretch; }
+  .espaces-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .espace-title { font-size: 24px; }
+  .parrainage-grid { grid-template-columns: 1fr; gap: 36px; }
+  .parrainage-side { position: static; padding: 28px 24px; }
+  .promo-top { padding: 10px 44px 10px 16px; font-size: 11px; }
+  .promo-top .promo-dismiss { right: 10px; }
 }
+
+/* ── Counter animated ── */
+.count-up { display: inline-block; min-width: 1ch; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
 
 <!-- Film grain -->
 <div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- ── Promo top bar (sticky urgence conversion) ── -->
+<div class="promo-top" id="promo-top" role="region" aria-label="Offre nouvelle inscription">
+  <span class="promo-star" aria-hidden="true">★</span>
+  <span>Ton premier cours est offert · <a href="#essai" class="promo-link">Réserve en 60 secondes →</a></span>
+  <button class="promo-dismiss" type="button" id="promo-dismiss" aria-label="Fermer le bandeau promotionnel">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+  </button>
+</div>
 
 <!-- ── Floating Navbar ── -->
 <nav class="floating-nav" aria-label="Navigation principale">
@@ -452,6 +678,7 @@ details[open] .faq-chev { transform: rotate(180deg); }
     <span class="nav-mono">· Rambouillet</span>
   </div>
   <div class="nav-links">
+    <a href="#espaces">Espaces</a>
     <a href="#cours">Cours</a>
     <a href="#planning">Planning</a>
     <a href="#tarifs">Tarifs</a>
@@ -460,7 +687,29 @@ details[open] .faq-chev { transform: rotate(180deg); }
   <a href="#essai" class="nav-cta-pill" aria-label="Réserver un cours d'essai gratuit">
     Réserver un cours →
   </a>
+  <button class="nav-burger" type="button" id="nav-burger" aria-expanded="false" aria-controls="nav-mobile" aria-label="Ouvrir le menu de navigation">
+    <svg class="icon-open" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="icon-close" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+  </button>
 </nav>
+
+<!-- ── Mobile nav overlay ── -->
+<div class="nav-mobile" id="nav-mobile" role="dialog" aria-label="Menu mobile" aria-hidden="true">
+  <a href="#espaces" data-nav-link>Espaces</a>
+  <a href="#cours" data-nav-link>Cours</a>
+  <a href="#planning" data-nav-link>Planning</a>
+  <a href="#tarifs" data-nav-link>Tarifs</a>
+  <a href="#parrainage" data-nav-link>Parrainage</a>
+  <a href="#contact" data-nav-link>Contact</a>
+  <a href="#essai" class="nav-mobile-cta" data-nav-link>
+    Réserver un cours d'essai →
+  </a>
+  <div class="nav-mobile-meta">
+    1 rue Clément Ader · 78125 Gazeran<br>
+    Lun–Sam · 07h00–22h00 · Dim · 09h00–18h00<br>
+    ★ 4.8/5 · 194 avis Google
+  </div>
+</div>
 
 <!-- ── Hero ── -->
 <section class="hero" aria-labelledby="hero-h1">
@@ -529,6 +778,105 @@ details[open] .faq-chev { transform: rotate(180deg); }
     <span class="marquee-star">★</span><span class="marquee-sep">·</span>
   </div>
 </div>
+
+<!-- ── Espaces (8 disciplines en grid magazine) ── -->
+<section id="espaces" class="espaces-section" aria-labelledby="espaces-h2">
+  <div class="section-header" data-reveal>
+    <span class="eyebrow">↦ Nos espaces · 8 disciplines</span>
+    <h2 class="section-title cream" id="espaces-h2" style="margin-top:12px;">Un seul abonnement, <em style="color:var(--rouge);font-style:italic;">huit</em> mondes.</h2>
+    <p style="margin-top:18px; font-size:15px; color:var(--muted-d); max-width:58ch;">Du tatami aux machines Hammer Strength, du court de squash au studio danse. Tout est inclus. Tu choisis ce qui te tente cette semaine.</p>
+  </div>
+
+  <div class="espaces-grid">
+    <article class="espace-card is-rouge" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=900&q=80" alt="Espace Boxe — sacs de frappe, ring, gants fournis"/>
+      <span class="espace-card-pill">8 cours / sem</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">01 · Combat</span>
+        <span class="espace-title">Boxe.</span>
+        <span class="espace-desc">Anglaise, kick, MMA technique. 3 niveaux, coachs certifiés.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1517960413843-0aee8e2b3285?auto=format&fit=crop&w=900&q=80" alt="Espace Cycle Indoor — RPM en groupe"/>
+      <span class="espace-card-pill">12 cours / sem</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">02 · Cardio</span>
+        <span class="espace-title">Cycle.</span>
+        <span class="espace-desc">RPM en groupe, 45 min haute cadence. Tout le corps.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=900&q=80" alt="Espace Hammer Strength — machines de force"/>
+      <span class="espace-card-pill">Free access</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">03 · Force</span>
+        <span class="espace-title">Hammer Strength.</span>
+        <span class="espace-desc">Machines haut de gamme. Force brute, hypertrophie, technique.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80" alt="Espace Cardio — tapis, vélos, rameurs"/>
+      <span class="espace-card-pill">Free access</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">04 · Endurance</span>
+        <span class="espace-title">Cardio.</span>
+        <span class="espace-desc">Tapis, rameurs, vélos. Programmes intervalle et endurance fond.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1535525153412-5a42439a210d?auto=format&fit=crop&w=900&q=80" alt="Espace Danse — studio jazz contemporain"/>
+      <span class="espace-card-pill">6 cours / sem</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">05 · Expression</span>
+        <span class="espace-title">Danse.</span>
+        <span class="espace-desc">Jazz, contemporain, fusion. L'ADN du club depuis 2018.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1554244933-d876deb6b2ff?auto=format&fit=crop&w=900&q=80" alt="Espace HIIT — intervalles haute intensité"/>
+      <span class="espace-card-pill">10 cours / sem</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">06 · Intensité</span>
+        <span class="espace-title">HIIT.</span>
+        <span class="espace-desc">Intervalles 30 min, résultats en 4 semaines. Niveau intermédiaire+.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1602811260306-b15c8e91dd0e?auto=format&fit=crop&w=900&q=80" alt="Espace Squash — court fermé"/>
+      <span class="espace-card-pill">Réservation</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">07 · Précision</span>
+        <span class="espace-title">Squash.</span>
+        <span class="espace-desc">Court professionnel, réservation 1h en ligne. Raquettes en prêt.</span>
+      </div>
+    </article>
+
+    <article class="espace-card" data-reveal>
+      <img class="espace-card-img" src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=900&q=80" alt="Espace Stretch et Sauna — récupération"/>
+      <span class="espace-card-pill">Inclus</span>
+      <div class="espace-card-veil"></div>
+      <div class="espace-card-content">
+        <span class="espace-mono">08 · Récup'</span>
+        <span class="espace-title">Stretch &amp; Sauna.</span>
+        <span class="espace-desc">Étirements guidés. Sauna inclus avant ou après chaque séance.</span>
+      </div>
+    </article>
+  </div>
+</section>
 
 <!-- ── Cours collectifs ── -->
 <section id="cours" class="courses-section" aria-labelledby="cours-h2">
@@ -609,6 +957,22 @@ details[open] .faq-chev { transform: rotate(180deg); }
         <span class="course-link" style="font-size:9px;">Voir les créneaux →</span>
       </div>
     </article>
+  </div>
+</section>
+
+<!-- ── CTA intermédiaire #1 (after cours collectifs) ── -->
+<section class="cta-band-mid is-dark" data-reveal aria-label="Réserver un cours d'essai">
+  <span class="eyebrow" style="color:var(--muted-d);">↦ Cours d'essai · sans engagement</span>
+  <h3>Tu veux tester avant de t'abonner ?<br><em>Un cours offert, on s'occupe du reste.</em></h3>
+  <p>Tu choisis le créneau. On te prête le matos. Pas de carte bancaire demandée.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+    <a href="#essai" class="cta-rouge" aria-label="Réserver mon cours d'essai gratuit">
+      <span>Réserver mon cours d'essai</span>
+      <span class="arrow-wrap" aria-hidden="true">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+    <a href="#planning" class="cta-ghost" aria-label="Voir le planning d'abord">Voir le planning d'abord</a>
   </div>
 </section>
 
@@ -847,6 +1211,21 @@ details[open] .faq-chev { transform: rotate(180deg); }
   </div>
 </section>
 
+<!-- ── CTA intermédiaire #2 (après témoignages) ── -->
+<section class="cta-band-mid" data-reveal aria-label="Rejoindre Danse et Fitness">
+  <span class="eyebrow eyebrow-light" style="color:var(--muted-l);">↦ <span class="count-up" data-count-to="957">0</span> abonnés à Rambouillet</span>
+  <h3>Ils ont sauté le pas.<br><em>Et toi, tu attends quoi ?</em></h3>
+  <p>Aurélie, Marc, Camille — ils sont tous passés par leur premier cours offert. On t'accueille pareil.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+    <a href="#essai" class="cta-rouge" aria-label="Réserver mon premier cours">
+      <span>Mon premier cours offert</span>
+      <span class="arrow-wrap" aria-hidden="true">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+  </div>
+</section>
+
 <!-- ── L'équipe ── -->
 <section class="equipe-section" aria-labelledby="equipe-h2">
   <div data-reveal>
@@ -935,6 +1314,52 @@ details[open] .faq-chev { transform: rotate(180deg); }
       <p class="faq-body">Salle ouverte du lundi au samedi 7h–22h, dimanche 9h–18h. Cours collectifs : planning hebdomadaire actualisé chaque dimanche sur <a href="https://www.fitness-rambouillet.com" style="color:var(--muted-l);text-decoration:underline;" target="_blank" rel="noopener">fitness-rambouillet.com</a>.</p>
     </details>
 
+  </div>
+</section>
+
+<!-- ── Parrainage ── -->
+<section id="parrainage" class="parrainage-section" aria-labelledby="parrainage-h2">
+  <div class="section-header" data-reveal>
+    <span class="eyebrow">↦ Parrainage local · Rambouillet</span>
+    <h2 class="section-title cream" id="parrainage-h2" style="margin-top:12px;">Trois récompenses, <em style="color:var(--rouge);font-style:italic;">pour chaque ami inscrit</em>.</h2>
+  </div>
+
+  <div class="parrainage-grid">
+    <div class="parrainage-rewards">
+      <div class="parrainage-card" data-reveal>
+        <span class="parrainage-num">01</span>
+        <div class="parrainage-text">
+          <strong>1 mois d'abonnement offert.</strong>
+          <span>Crédité automatiquement sur ton compte le jour où ton filleul valide son premier paiement. Aucun délai.</span>
+        </div>
+      </div>
+      <div class="parrainage-card" data-reveal>
+        <span class="parrainage-num">02</span>
+        <div class="parrainage-text">
+          <strong>1 séance de coaching privé.</strong>
+          <span>60 minutes avec Léo M. ou Cécile B. au choix. Sur ton créneau, dans ta discipline.</span>
+        </div>
+      </div>
+      <div class="parrainage-card" data-reveal>
+        <span class="parrainage-num">03</span>
+        <div class="parrainage-text">
+          <strong>1 t-shirt D&amp;F édition limitée.</strong>
+          <span>Print Fraunces serif sur coton lourd 240g. Tailles XS à XXL, série 200 ex.</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="parrainage-side" data-reveal>
+      <span class="parrainage-stat"><span class="rouge">★</span> <span class="count-up" data-count-to="68">0</span>&nbsp;parrainages cette année</span>
+      <h3>Pas un programme corporate. <em>Une histoire de quartier.</em></h3>
+      <p>On préfère qu'un ami te recommande plutôt qu'une pub Facebook. Et on récompense ça correctement, parce qu'on sait ce que c'est de faire venir quelqu'un.</p>
+      <a href="#essai" class="cta-rouge" aria-label="Demander mon code parrainage personnel">
+        <span>Obtenir mon code parrainage</span>
+        <span class="arrow-wrap" aria-hidden="true">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+    </aside>
   </div>
 </section>
 
@@ -1035,6 +1460,110 @@ details[open] .faq-chev { transform: rotate(180deg); }
       document.querySelectorAll("[data-reveal]").forEach(el => {
         gsap.set(el, { y: 20, opacity: 0, filter: "blur(6px)" });
         io.observe(el);
+      });
+    }
+
+    // ── Lenis smooth scroll (respect reduced motion) ──
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof Lenis !== 'undefined' && !prefersReduced) {
+      const lenis = new Lenis({
+        duration: 1.15,
+        easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        smoothTouch: false,
+        wheelMultiplier: 0.9,
+      });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      // Hash links → Lenis scrollTo
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (ev) => {
+          const id = a.getAttribute('href');
+          if (id && id.length > 1) {
+            const el = document.querySelector(id);
+            if (el) { ev.preventDefault(); lenis.scrollTo(el, { offset: -40, duration: 1.2 }); }
+          }
+        });
+      });
+    } else {
+      // No Lenis → use native scroll. html.scroll-behavior:smooth already set.
+    }
+
+    // ── Burger nav ──
+    const burger = document.getElementById('nav-burger');
+    const navMobile = document.getElementById('nav-mobile');
+    if (burger && navMobile) {
+      const closeMenu = () => {
+        burger.setAttribute('aria-expanded', 'false');
+        navMobile.classList.remove('is-open');
+        navMobile.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      };
+      const openMenu = () => {
+        burger.setAttribute('aria-expanded', 'true');
+        navMobile.classList.add('is-open');
+        navMobile.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+      burger.addEventListener('click', () => {
+        burger.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
+      });
+      navMobile.querySelectorAll('[data-nav-link]').forEach(a => {
+        a.addEventListener('click', closeMenu);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') closeMenu();
+      });
+    }
+
+    // ── Promo dismiss (sessionStorage) ──
+    const promo = document.getElementById('promo-top');
+    const promoDismiss = document.getElementById('promo-dismiss');
+    if (promo && promoDismiss) {
+      if (sessionStorage.getItem('df-promo-dismissed') === '1') {
+        promo.style.display = 'none';
+      }
+      promoDismiss.addEventListener('click', () => {
+        promo.classList.add('is-hidden');
+        sessionStorage.setItem('df-promo-dismissed', '1');
+        setTimeout(() => { promo.style.display = 'none'; }, 700);
+      });
+    }
+
+    // ── Number counters (count-up on intersect) ──
+    const counters = document.querySelectorAll('.count-up[data-count-to]');
+    if (counters.length) {
+      const cio = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          const target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+          const dur = 1400; const t0 = performance.now();
+          const tick = (t) => {
+            const k = Math.min(1, (t - t0) / dur);
+            const eased = 1 - Math.pow(1 - k, 4);
+            el.textContent = Math.round(eased * target).toLocaleString('fr-FR');
+            if (k < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          cio.unobserve(el);
+        });
+      }, { threshold: 0.4 });
+      counters.forEach(c => cio.observe(c));
+    }
+
+    // ── Magnetic CTA (desktop only) ──
+    if (window.innerWidth > 900 && !prefersReduced) {
+      document.querySelectorAll('.cta-rouge').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const r = btn.getBoundingClientRect();
+          const x = (e.clientX - r.left - r.width / 2) * 0.18;
+          const y = (e.clientY - r.top - r.height / 2) * 0.18;
+          btn.style.transform = `translate(${x}px, ${y}px)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
       });
     }
   });
